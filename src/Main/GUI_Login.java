@@ -22,7 +22,8 @@ public class GUI_Login {
 	private JTextField txtLegajo;
 	private JPasswordField txtContraseña;
 	
-	//private Login login;
+	//Parte logica del login
+	private Login login;
 	
 
 	public static void main(String[] args) {
@@ -38,13 +39,11 @@ public class GUI_Login {
 		});
 	}
 
-
 	public GUI_Login() {
-		//Login login = new Login;
+		Login login = new Login();
 		inicializarGUI();
 	}
 
-	
 	private void inicializarGUI() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 589, 354);
@@ -97,7 +96,7 @@ public class GUI_Login {
 		btnConectarInspector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				boolean resultado;
-				resultado = true; //login.conectar(txtLegajo.getText(), txtContraseña.getText());
+				resultado = login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
 				
 				if(resultado) {
 					//Exito al conectarse a la base de datos
@@ -122,14 +121,12 @@ public class GUI_Login {
 		btnConectarAdmin.setToolTipText("Conectarse como administrador");
 		btnConectarAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean resultado = true;
-				//resultado = login.conectar("admin");
-				if(resultado) {
-					//Exito al entrar
+				boolean resultado;
+				resultado = login.conectarBD("admin");
+				if(resultado) { //Exito al entrar
 					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.INFORMATION_MESSAGE);
 				}
-				else {
-					//Intentar de nuevo
+				else { //Intentar de nuevo
 					JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);
 				}	
 			}
@@ -141,27 +138,14 @@ public class GUI_Login {
 		btnSalir = new JButton("Salir");
 		btnSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//login.salir();
+				login.desconectarBD();
 				System.exit(0);
 			}
 		});
 		btnSalir.setToolTipText("Salir de la app");
 		btnSalir.setFont(new Font("Dubai", Font.BOLD, 12));
 		btnSalir.setBounds(23, 237, 89, 51);
-		frame.getContentPane().add(btnSalir);
-		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnNewButton.setBounds(23, 42, 89, 23);
-		frame.getContentPane().add(btnNewButton);
-		
-		
-		
-		
-		
+		frame.getContentPane().add(btnSalir);		
 		
 		
 		

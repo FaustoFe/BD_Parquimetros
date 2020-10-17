@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-public abstract class Login {
+public class Login {
 
 	private Connection cnx;
 
@@ -16,7 +16,7 @@ public abstract class Login {
 	
 		// Conexión con el servidor
 		
-		boolean resultado = true;
+		boolean resultado = false;
 		
 		java.sql.DriverManager.setLoginTimeout(10);
 		
@@ -27,6 +27,7 @@ public abstract class Login {
 		
 		try {
 			cnx = java.sql.DriverManager.getConnection(url, usuario, clave);
+			resultado = true;
 		} catch (java.sql.SQLException ex) {
 			System.out.println("SQLException: " + ex.getMessage());
 			System.out.println("SQLState: " + ex.getSQLState());
@@ -36,16 +37,13 @@ public abstract class Login {
 		return resultado;
 	}
 	
-	private void desconectarBD() {
-	      if (this.cnx != null)
-	      {
-	         try
-	         {
+	public void desconectarBD() {
+	      if (this.cnx != null) {
+	         try {
 	            this.cnx.close();
 	            this.cnx = null;
 	         }
-	         catch (SQLException ex)
-	         {
+	         catch (SQLException ex) {
 	            System.out.println("SQLException: " + ex.getMessage());
 	            System.out.println("SQLState: " + ex.getSQLState());
 	            System.out.println("VendorError: " + ex.getErrorCode());
