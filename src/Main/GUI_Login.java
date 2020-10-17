@@ -1,59 +1,88 @@
 package Main;
+
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.JTextField;
 import javax.swing.JPasswordField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.Color;
+import javax.swing.JTextField;
 
-@SuppressWarnings("serial")
-public class GUI_Login extends javax.swing.JInternalFrame{
+public class GUI_Login {
+
+	private JFrame frame;
 	
 	private JLabel lblLegajo, lblPassword, lblTitulo, lblAdmin;
-	private JButton btnConectarInspector, btnConectarAdmin,btnSalir;
+	private JButton btnConectarInspector, btnConectarAdmin, btnSalir;
 	private JTextField txtLegajo;
 	private JPasswordField txtContraseña;
+	
 	//private Login login;
 	
+
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					GUI_Login ventana = new GUI_Login();
+					ventana.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+
 	public GUI_Login() {
-		//login = new Login();
+		//Login login = new Login;
+		inicializarGUI();
+	}
+
+	
+	private void inicializarGUI() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 589, 354);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		getContentPane().setBackground(new Color(51, 204, 204));
-		setTitle("Proyecto BD - Parquimetros");
-		getContentPane().setFont(new Font("Dubai", Font.PLAIN, 12));
-		getContentPane().setLayout(null);
+		frame.getContentPane().setBackground(new Color(51, 204, 204));
+		frame.setTitle("Proyecto BD - Parquimetros");
+		frame.getContentPane().setFont(new Font("Dubai", Font.PLAIN, 12));
+		frame.getContentPane().setLayout(null);		
 		
+				
 		// Labels
 		lblTitulo = new JLabel("Panel de logueo");
-		lblTitulo.setBounds(173, 11, 272, 69);
+		lblTitulo.setBounds(160, 11, 272, 69);
 		lblTitulo.setFont(new Font("Dubai", Font.PLAIN, 40));
-		getContentPane().add(lblTitulo);
+		frame.getContentPane().add(lblTitulo);
 		
 		lblAdmin = new JLabel("Conectar como admin");
 		lblAdmin.setFont(new Font("Dubai", Font.PLAIN, 12));
-		lblAdmin.setBounds(453, 358, 111, 20);
-		getContentPane().add(lblAdmin);		
+		lblAdmin.setBounds(448, 216, 111, 20);
+		frame.getContentPane().add(lblAdmin);		
 		
 		lblLegajo = new JLabel("Legajo");
 		lblLegajo.setFont(new Font("Dubai", Font.PLAIN, 15));
 		lblLegajo.setBounds(137, 128, 59, 35);
-		getContentPane().add(lblLegajo);
+		frame.getContentPane().add(lblLegajo);
 		
 		lblPassword = new JLabel("Password");
 		lblPassword.setFont(new Font("Dubai", Font.PLAIN, 15));
 		lblPassword.setBounds(137, 159, 59, 35);
-		getContentPane().add(lblPassword);
+		frame.getContentPane().add(lblPassword);
 		
 		// Txt & password
 		txtLegajo = new JTextField();
 		txtLegajo.setFont(new Font("Dubai", Font.PLAIN, 12));
 		txtLegajo.setToolTipText("Ingrese legajo");
 		txtLegajo.setBounds(210, 135, 136, 20);
-		getContentPane().add(txtLegajo);
+		frame.getContentPane().add(txtLegajo);
 		txtLegajo.setColumns(10);
 		
 		txtContraseña = new JPasswordField();
@@ -61,7 +90,7 @@ public class GUI_Login extends javax.swing.JInternalFrame{
 		txtContraseña.setEchoChar('*');
 		txtContraseña.setToolTipText("Ingrese contrase\u00F1a");
 		txtContraseña.setBounds(210, 166, 136, 20);
-		getContentPane().add(txtContraseña);
+		frame.getContentPane().add(txtContraseña);
 		
 		// Botones
 		btnConectarInspector = new JButton("Conectar");
@@ -87,7 +116,7 @@ public class GUI_Login extends javax.swing.JInternalFrame{
 		btnConectarInspector.setToolTipText("Conectarse como inspector");
 		btnConectarInspector.setFont(new Font("Dubai", Font.BOLD, 12));
 		btnConectarInspector.setBounds(366, 135, 89, 51);
-		getContentPane().add(btnConectarInspector);
+		frame.getContentPane().add(btnConectarInspector);
 		
 		btnConectarAdmin = new JButton("Conectar");
 		btnConectarAdmin.setToolTipText("Conectarse como administrador");
@@ -106,8 +135,8 @@ public class GUI_Login extends javax.swing.JInternalFrame{
 			}
 		});
 		btnConectarAdmin.setFont(new Font("Dubai", Font.BOLD, 12));
-		btnConectarAdmin.setBounds(463, 379, 89, 51);
-		getContentPane().add(btnConectarAdmin);
+		btnConectarAdmin.setBounds(458, 237, 89, 51);
+		frame.getContentPane().add(btnConectarAdmin);
 		
 		btnSalir = new JButton("Salir");
 		btnSalir.addActionListener(new ActionListener() {
@@ -118,16 +147,23 @@ public class GUI_Login extends javax.swing.JInternalFrame{
 		});
 		btnSalir.setToolTipText("Salir de la app");
 		btnSalir.setFont(new Font("Dubai", Font.BOLD, 12));
-		btnSalir.setBounds(28, 379, 89, 51);
-		getContentPane().add(btnSalir);
+		btnSalir.setBounds(23, 237, 89, 51);
+		frame.getContentPane().add(btnSalir);
+		
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnNewButton.setBounds(23, 42, 89, 23);
+		frame.getContentPane().add(btnNewButton);
 		
 		
-		//inicializarGUI();
-	}
 		
 		
-	
-	private void inicializarGUI() {
-	
+		
+		
+		
+		
 	}
 }
