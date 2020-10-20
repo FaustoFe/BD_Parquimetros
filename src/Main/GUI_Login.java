@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,6 +25,7 @@ public class GUI_Login {
 	
 	//Parte logica del login
 	private Login login;
+	private Connection cnx;
 	
 
 	public static void main(String[] args) {
@@ -95,17 +97,18 @@ public class GUI_Login {
 		btnConectarInspector = new JButton("Conectar");
 		btnConectarInspector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean resultado;
-				resultado = login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
 				
-				if(resultado) {
-					//Exito al conectarse a la base de datos
+				cnx = login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
+				
+				if(cnx == null) { //Exito al conectarse a la base de datos
 					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.INFORMATION_MESSAGE);
-					//txtContraseña.setText("");
-					//txtLegajo.setText("");
+					txtContraseña.setText("");
+					txtLegajo.setText("");
+					frame.setVisible(false);
+					
+					GUI_Inspector gi = new GUI_Inspector(cnx);					
 				}
-				else {
-					//Error al conectarse
+				else { //Error al conectarse
 					JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);
 					txtContraseña.setText("");
 					txtLegajo.setText("");
@@ -121,10 +124,13 @@ public class GUI_Login {
 		btnConectarAdmin.setToolTipText("Conectarse como administrador");
 		btnConectarAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean resultado;
-				resultado = login.conectarBD("admin");
-				if(resultado) { //Exito al entrar
+				cnx = login.conectarBD("admin");
+				if(cnx == null) { //Exito al entrar
 					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.INFORMATION_MESSAGE);
+					
+					frame.setVisible(false);
+					GUI_Admin ga = new GUI_Admin(cnx);
+					
 				}
 				else { //Intentar de nuevo
 					JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);
