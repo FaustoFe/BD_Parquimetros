@@ -35,7 +35,7 @@ public class GUI_Admin {
 	private DBTable tabla;
 	
 	private Admin admin;
-	private JTextField textField;
+	private JTextField txtSelectFrom;
 	private JLabel lblAtributos, lblTablas; 
 	private JList ListaTablas, ListaAtributos;
 	private JButton btnEjecutar;
@@ -63,7 +63,7 @@ public class GUI_Admin {
 		btnEjecutar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
-				admin.sentenciaSQL(textField.getText());
+				admin.sentenciaSQL(txtSelectFrom.getText());
 			
 			}
 		});
@@ -71,12 +71,12 @@ public class GUI_Admin {
 		btnEjecutar.setBounds(335, 32, 89, 37);
 		frame.getContentPane().add(btnEjecutar);
 		
-		textField = new JTextField();
-		textField.setText("SELECT * FROM multas");
-		textField.setFont(new Font("Dubai", Font.PLAIN, 12));
-		textField.setBounds(10, 12, 315, 77);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
+		txtSelectFrom = new JTextField();
+		txtSelectFrom.setText("SELECT * FROM multa");
+		txtSelectFrom.setFont(new Font("Dubai", Font.PLAIN, 12));
+		txtSelectFrom.setBounds(10, 12, 315, 77);
+		frame.getContentPane().add(txtSelectFrom);
+		txtSelectFrom.setColumns(10);
 		
 		ListaTablas = new JList();
 		ListaTablas.setToolTipText("Lista de tablas");
@@ -119,7 +119,7 @@ public class GUI_Admin {
 		tabla.setBounds(70, 400, 284, -244);
 		tabla.getTable().setBounds(1, -1, 399, 0);
 		tabla.setEditable(false);
-		//tabla.setVisible(true);
+		tabla.setVisible(true);
 		frame.getContentPane().add(tabla, BorderLayout.CENTER); 
 		tabla.setLayout(null);
 			
@@ -140,7 +140,7 @@ public class GUI_Admin {
 		ListaTablas.setModel(listModel);
 	}
 	
-	public void resfrescar(ResultSet rs) {
+	public void refrescar(ResultSet rs) {
 		try {
 			tabla.refresh(rs);
 		} catch (SQLException e) { e.printStackTrace(); }

@@ -49,7 +49,7 @@ public class GUI_Login {
 		
 
 	public GUI_Login() {
-		Login login = new Login();
+		login = new Login();
 		inicializarGUI();
 	}
 
@@ -108,7 +108,7 @@ public class GUI_Login {
 				
 				cnx = login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
 				
-				if(cnx == null) { //Exito al conectarse a la base de datos
+				if(cnx != null) { //Exito al conectarse a la base de datos
 					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.INFORMATION_MESSAGE);
 					txtContraseña.setText("");
 					txtLegajo.setText("");
@@ -133,7 +133,8 @@ public class GUI_Login {
 		btnConectarAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cnx = login.conectarBD("admin");
-				if(cnx == null) { //Exito al entrar
+				
+				if(cnx != null) { //Exito al entrar
 					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.INFORMATION_MESSAGE);
 					
 					frame.setVisible(false);
@@ -164,4 +165,5 @@ public class GUI_Login {
 		
 		
 	}
+
 }
