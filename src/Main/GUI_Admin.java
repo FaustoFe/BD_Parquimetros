@@ -20,6 +20,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.JList;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
@@ -43,7 +45,7 @@ public class GUI_Admin {
 	public GUI_Admin(Connection cnx) {
 		admin = new Admin(this, cnx);
 		inicializarGUI();
-		cargarListaTablas();
+		actualizarListaTablas();
 		this.frame.setVisible(true);
 	}
 	
@@ -82,7 +84,16 @@ public class GUI_Admin {
 		ListaTablas.setBounds(463, 70, 110, 352);
 		frame.getContentPane().add(ListaTablas);
 		
-		ListaTablas.addListSelectionListener();
+		//En construccion
+		ListaTablas.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent arg0) {
+                if (!arg0.getValueIsAdjusting()) {
+                  //label.setText(ListaTablas.getSelectedValue().toString());
+                }
+            }
+        });
 		
 		
 		
