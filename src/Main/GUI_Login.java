@@ -27,6 +27,12 @@ public class GUI_Login {
 	private Login login;
 	private Connection cnx;
 	
+	
+	/*
+	public static void mostrarMensaje(String s) {
+		JOptionPane.showMessageDialog(null, "asd","asd", JOptionPane.INFORMATION_MESSAGE);
+	}
+	*/
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -40,6 +46,7 @@ public class GUI_Login {
 			}
 		});
 	}
+		
 
 	public GUI_Login() {
 		Login login = new Login();
@@ -48,6 +55,7 @@ public class GUI_Login {
 
 	private void inicializarGUI() {
 		frame = new JFrame();
+		frame.setResizable(false);
 		frame.setBounds(100, 100, 589, 354);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
