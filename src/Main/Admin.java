@@ -1,8 +1,6 @@
 package Main;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -91,11 +89,10 @@ public ArrayList<String> getAtributos(String tabla) {
 	    
 		try {
 			stmt = cnx.createStatement();
-			rslt = stmt.executeQuery("SELECT * FROM " + tabla);
-			ResultSetMetaData metadata = rslt.getMetaData();
+			rslt = stmt.executeQuery("DESCRIBE " + tabla);
 		    
-		    for(int i = 0; i < metadata.getColumnCount(); i++) {
-		    	resultado.add(metadata.getColumnName(i));
+			while(rslt.next()) {
+				resultado.add(rslt.getString("Field"));
 		    }
 		    
 		    rslt.close();
