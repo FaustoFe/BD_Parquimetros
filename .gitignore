@@ -1,3 +1,5 @@
 /bin/
 .classpath
 *.class
+*.class
+bin/*
