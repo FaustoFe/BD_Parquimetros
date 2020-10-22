@@ -14,6 +14,9 @@ public class Admin {
 		this.gui = gui;
 	}
 	
+	/*
+	 * Ejecuta una sentencia SQL pasada por parametro (DEVERÍA RETORNAR EL ResultSet CUANDO SE PUEDA)
+	 */
 	public void sentenciaSQL(String consulta){
 		
 		boolean isResultSet = false;
@@ -36,6 +39,7 @@ public class Admin {
 			
 			/*
 			 * Actualizar lista de tablas (por si se borro alguna tabla), se podria limpiar la lista de atributos.
+			 * DEBERÍA HACERLO LA GUI
 			 */
 			
 			stmt.close();
@@ -51,6 +55,9 @@ public class Admin {
 
 	}
 	
+	/*
+	 * Retorna un ArrayList con los nombres de todas las tablas de la base de datos.
+	 */
 	public ArrayList<String> getTablas() {
 		
 		Statement stmt = null;
@@ -73,15 +80,15 @@ public class Admin {
 			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
 			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
 			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
-			/*
-			 * Mostrar mensaje de error.
-			 */
 		}
 		    
 	    return resultado;
 	}
 	
-public ArrayList<String> getAtributos(String tabla) {
+	/*
+	 * Retorna un ArrayList con los nombres de todos los atributos de la tabla pasada por parametro.
+	 */
+	public ArrayList<String> getAtributos(String tabla) {
 		
 		Statement stmt = null;
 		ResultSet rslt = null;
@@ -102,9 +109,6 @@ public ArrayList<String> getAtributos(String tabla) {
 			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
 			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
 			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
-			/*
-			 * Mostrar mensaje de error.
-			 */
 		}
 	    
 	    return resultado;
