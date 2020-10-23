@@ -43,7 +43,7 @@ public class GUI_Admin {
 		
 	
 	public GUI_Admin(Connection cnx) {
-		admin = new Admin(this, cnx);
+		admin = new Admin(cnx);
 		inicializarGUI();
 		actualizarListaTablas();
 		this.frame.setVisible(true);
@@ -63,8 +63,15 @@ public class GUI_Admin {
 		btnEjecutar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
-				admin.sentenciaSQL(txtSelectFrom.getText());
-			
+				ResultSet rs = admin.sentenciaSQL(txtSelectFrom.getText());
+				if (rs != null) {
+					try {
+						tabla.refresh(rs);
+					} catch (SQLException e) { e.printStackTrace(); }
+				}
+				
+				actualizarListaTablas();
+				limpiarListaAtributos();
 			}
 		});
 		btnEjecutar.setFont(new Font("Dubai", Font.PLAIN, 12));
@@ -84,18 +91,15 @@ public class GUI_Admin {
 		ListaTablas.setBounds(463, 70, 110, 352);
 		frame.getContentPane().add(ListaTablas);
 		
-		//En construccion
+	
 		ListaTablas.addListSelectionListener(new ListSelectionListener() {
 
             @Override
             public void valueChanged(ListSelectionEvent arg0) {
-                if (!arg0.getValueIsAdjusting()) {
-                  //label.setText(ListaTablas.getSelectedValue().toString());
-                }
+            	String nombreTabla = ListaTablas.getSelectedValue().toString();
+                actualizarListaAtributos(nombreTabla);                         
             }
         });
-		
-		
 		
 		
 		ListaAtributos = new JList();
@@ -127,10 +131,10 @@ public class GUI_Admin {
 	}	
 	
 	
-	public void actualizarListaTablas() {
-		
+	
+	
+	private void actualizarListaTablas() {
 		DefaultListModel listModel = new DefaultListModel();
-		
 		ArrayList<String> lista = admin.getTablas();
 		
 		for(int i = 0; i < lista.size(); i++) {
@@ -140,9 +144,28 @@ public class GUI_Admin {
 		ListaTablas.setModel(listModel);
 	}
 	
-	public void refrescar(ResultSet rs) {
-		try {
-			tabla.refresh(rs);
-		} catch (SQLException e) { e.printStackTrace(); }
+	private void actualizarListaAtributos(String tabla) {
+		DefaultListModel listModel = new DefaultListModel();
+		ArrayList<String> lista = admin.getAtributos(tabla);
+		
+		for(int i = 0; i < lista.size(); i++) {
+			listModel.add(i, lista.get(i));
+		}
+		
+		ListaAtributos.setModel(listModel);
 	}
+	
+	
+	
+	private void limpiarListaAtributos() {
+		DefaultListModel listModel = (DefaultListModel) ListaAtributos.getModel();
+		listModel.removeAllElements();
+	}
+	
+	private void limpiarListaTablas() {
+		DefaultListModel listModel = (DefaultListModel) ListaTablas.getModel();
+		listModel.removeAllElements();
+	}
+	
+
 }

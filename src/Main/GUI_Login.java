@@ -132,18 +132,25 @@ public class GUI_Login {
 		btnConectarAdmin.setToolTipText("Conectarse como administrador");
 		btnConectarAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cnx = login.conectarBD("admin");
+				String password = null;
+				JPasswordField pf = new JPasswordField();
+				int opcion = JOptionPane.showConfirmDialog(null, pf, "Ingrese contraseña de administrador",JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 				
-				if(cnx != null) { //Exito al entrar
-					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.INFORMATION_MESSAGE);
+				if (opcion == JOptionPane.OK_OPTION) {
 					
-					frame.setVisible(false);
-					GUI_Admin ga = new GUI_Admin(cnx);
+					password = new String(pf.getPassword());
+					cnx = login.conectarBD(password);
 					
+					if(cnx != null) { //Exito al entrar
+						JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.PLAIN_MESSAGE);
+						
+						frame.setVisible(false);
+						GUI_Admin ga = new GUI_Admin(cnx);
+					}
+					else { //Intentar de nuevo
+						JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);	
+					}
 				}
-				else { //Intentar de nuevo
-					JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);
-				}	
 			}
 		});
 		btnConectarAdmin.setFont(new Font("Dubai", Font.BOLD, 12));
@@ -165,5 +172,4 @@ public class GUI_Login {
 		
 		
 	}
-
 }

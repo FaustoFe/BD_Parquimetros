@@ -2,7 +2,6 @@ package Main;
 
 import java.awt.EventQueue;
 import java.sql.Connection;
-
 import javax.swing.JFrame;
 import javax.swing.JButton;
 
