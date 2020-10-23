@@ -30,7 +30,7 @@ public class Admin {
 				rslt = stmt.getResultSet();
 			}
 			
-			stmt.close();
+			//stmt.close();
 			
 		} catch (java.sql.SQLException ex) {
 			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL

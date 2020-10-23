@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -18,6 +19,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
@@ -40,9 +42,12 @@ public class GUI_Admin {
 	private JList ListaTablas, ListaAtributos;
 	private JButton btnEjecutar;
 	
+	private DefaultListModel modeloLT,modeloLA;
 		
+	private final Connection conexion;
 	
 	public GUI_Admin(Connection cnx) {
+		conexion = cnx;
 		admin = new Admin(cnx);
 		inicializarGUI();
 		actualizarListaTablas();
@@ -59,19 +64,52 @@ public class GUI_Admin {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
+		tabla = new DBTable();		
+		//tabla.getTable().setFont(new Font("Dubai", Font.PLAIN, 12));
+		tabla.setBounds(70, 400, 284, -244);
+		//tabla.getTable().setBounds(1, -1, 399, 0);
+		tabla.setEditable(false);
+		tabla.setVisible(true);
+		frame.getContentPane().add(tabla, BorderLayout.CENTER); 
+		//tabla.setLayout(null);
+		
+		
 		btnEjecutar = new JButton("Ejecutar");
 		btnEjecutar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
+				Statement stmt;
+				try {
+					stmt = conexion.createStatement();
+					String sql = "SELECT legajo FROM accede";
+					ResultSet rs = stmt.executeQuery(sql);
+					tabla.refresh(rs);
+				} catch (SQLException e1) {	e1.printStackTrace();}
+
+		        
+
+
+		        
+		       
+		                 
+		        //actualiza el contenido de la tabla con los datos del resulset rs
+		         //tabla.refresh(rs);
+				
+				
+				
+				/*
 				ResultSet rs = admin.sentenciaSQL(txtSelectFrom.getText());
 				if (rs != null) {
 					try {
 						tabla.refresh(rs);
-					} catch (SQLException e) { e.printStackTrace(); }
+						rs.close();
+					} catch (SQLException d) { d.printStackTrace(); }
 				}
 				
+				*/
 				actualizarListaTablas();
-				limpiarListaAtributos();
+				modeloLA.removeAllElements();
+				
 			}
 		});
 		btnEjecutar.setFont(new Font("Dubai", Font.PLAIN, 12));
@@ -89,23 +127,27 @@ public class GUI_Admin {
 		ListaTablas.setToolTipText("Lista de tablas");
 		ListaTablas.setFont(new Font("Dubai", Font.PLAIN, 12));
 		ListaTablas.setBounds(463, 70, 110, 352);
+		modeloLT = new DefaultListModel();
+		ListaTablas.setModel(modeloLT);
 		frame.getContentPane().add(ListaTablas);
 		
-	
-		ListaTablas.addListSelectionListener(new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent arg0) {
-            	String nombreTabla = ListaTablas.getSelectedValue().toString();
-                actualizarListaAtributos(nombreTabla);                         
-            }
-        });
+		MouseListener mouseListener = new MouseAdapter() {
+		    public void mouseClicked(MouseEvent e) {
+		        if (e.getClickCount() == 1) {
+		           String nombreTabla = ListaTablas.getSelectedValue().toString();
+		           actualizarListaAtributos(nombreTabla); 
+		         }
+		    }
+		};
+		ListaTablas.addMouseListener(mouseListener);
 		
 		
 		ListaAtributos = new JList();
 		ListaAtributos.setToolTipText("Lista de atributos de una tabla");
 		ListaAtributos.setFont(new Font("Dubai", Font.PLAIN, 12));
 		ListaAtributos.setBounds(599, 70, 110, 352);
+		modeloLA = new DefaultListModel();
+		ListaAtributos.setModel(modeloLA);		
 		frame.getContentPane().add(ListaAtributos);
 		
 		lblTablas = new JLabel("Tablas");
@@ -116,17 +158,7 @@ public class GUI_Admin {
 		lblAtributos = new JLabel("Atributos");
 		lblAtributos.setFont(new Font("Dubai", Font.PLAIN, 14));
 		lblAtributos.setBounds(626, 43, 64, 14);
-		frame.getContentPane().add(lblAtributos);
-        
-		tabla = new DBTable();		
-		tabla.getTable().setFont(new Font("Dubai", Font.PLAIN, 12));
-		tabla.setBounds(70, 400, 284, -244);
-		tabla.getTable().setBounds(1, -1, 399, 0);
-		tabla.setEditable(false);
-		tabla.setVisible(true);
-		frame.getContentPane().add(tabla, BorderLayout.CENTER); 
-		tabla.setLayout(null);
-			
+		frame.getContentPane().add(lblAtributos); 
 		
 	}	
 	
@@ -134,38 +166,25 @@ public class GUI_Admin {
 	
 	
 	private void actualizarListaTablas() {
-		DefaultListModel listModel = new DefaultListModel();
+		modeloLT.removeAllElements();
+		
 		ArrayList<String> lista = admin.getTablas();
 		
 		for(int i = 0; i < lista.size(); i++) {
-			listModel.add(i, lista.get(i));
+			modeloLT.add(i, lista.get(i));
 		}
-		
-		ListaTablas.setModel(listModel);
 	}
 	
 	private void actualizarListaAtributos(String tabla) {
-		DefaultListModel listModel = new DefaultListModel();
+		modeloLA.removeAllElements();
+		
 		ArrayList<String> lista = admin.getAtributos(tabla);
 		
 		for(int i = 0; i < lista.size(); i++) {
-			listModel.add(i, lista.get(i));
+			modeloLA.add(i, lista.get(i));
 		}
-		
-		ListaAtributos.setModel(listModel);
 	}
 	
-	
-	
-	private void limpiarListaAtributos() {
-		DefaultListModel listModel = (DefaultListModel) ListaAtributos.getModel();
-		listModel.removeAllElements();
-	}
-	
-	private void limpiarListaTablas() {
-		DefaultListModel listModel = (DefaultListModel) ListaTablas.getModel();
-		listModel.removeAllElements();
-	}
 	
 
 }

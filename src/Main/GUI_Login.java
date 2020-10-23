@@ -139,7 +139,8 @@ public class GUI_Login {
 				if (opcion == JOptionPane.OK_OPTION) {
 					
 					password = new String(pf.getPassword());
-					cnx = login.conectarBD(password);
+					//cnx = login.conectarBD(password);
+					cnx = login.conectarBD("admin");
 					
 					if(cnx != null) { //Exito al entrar
 						JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.PLAIN_MESSAGE);
