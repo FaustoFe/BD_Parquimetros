@@ -7,17 +7,15 @@ import java.util.ArrayList;
 public class Admin {
 
 	private Connection cnx;
-	private GUI_Admin gui;
 	
-	public Admin(GUI_Admin gui, Connection cnx) {
+	public Admin(Connection cnx) {
 		this.cnx = cnx;
-		this.gui = gui;
 	}
 	
 	/*
 	 * Ejecuta una sentencia SQL pasada por parametro (DEVERÍA RETORNAR EL ResultSet CUANDO SE PUEDA)
 	 */
-	public void sentenciaSQL(String consulta){
+	public ResultSet sentenciaSQL(String consulta){
 		
 		boolean isResultSet = false;
 		Statement stmt = null;
@@ -30,17 +28,7 @@ public class Admin {
 			isResultSet = stmt.execute(consulta); 
 			if (isResultSet) { //La sentencia tiene ResultSet
 				rslt = stmt.getResultSet();
-				gui.refrescar(rslt);
-				rslt.close();
 			}
-			else {
-				
-			}
-			
-			/*
-			 * Actualizar lista de tablas (por si se borro alguna tabla), se podria limpiar la lista de atributos.
-			 * DEBERÍA HACERLO LA GUI
-			 */
 			
 			stmt.close();
 			
@@ -52,7 +40,7 @@ public class Admin {
 			 * Mostrar mensaje de error.
 			 */
 		}
-
+		return rslt;
 	}
 	
 	/*
