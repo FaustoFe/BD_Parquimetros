@@ -10,9 +10,11 @@ import java.util.Date;
 public class Inspector {
 
 	private Connection cnx;
+	private int legajo;
 	
-	public Inspector(Connection cnx) {
+	public Inspector(Connection cnx, int legajo) {
 		this.cnx = cnx;
+		this.legajo = legajo;
 	}
 
 	
@@ -38,20 +40,39 @@ public class Inspector {
 			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 		}
 		
-		return null;
+		return resultado;
 	}
 	
-	public void conectarParquimetro(String calle, String altura) {
+	public void conectarParquimetro(String calle, int altura) {
 		
-		// Registrar acceso del inspector al parquimetro (ANTES DE CONTROLAR O DESPUES?)
-		/*
-		 * Se debera controlar que el inspector tenga asociada la ubicacion correspondiente al parquimetro 
-		 * seleccionado, para el dia y hora en que se realiza la conexion. De no ser asi, no
-		 * se generaron las multas y se debera mostrar un mensaje indicando que el inspector no esta
-		 * autorizado para labrar multas en esa ubicacion. Considere que el turno mañana es de 8 a
-		 * 13:59 hs. y el turno tarde es de 14 a 20 hs.
-		 */
+		Fecha fecha = new Fecha();
+		String dia = fecha.getDia();
+		String turno = fecha.getTurno();
 		
+		// Controlar que el inspector tenga asociada la ubicacion correspondiente al parquimetro seleccionado, 
+		// para el dia y hora en que se realiza la conexion. 
+		try {
+			Statement stmt = cnx.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT calle, altura " + 
+											 "FROM asociado_con " + 
+											 "WHERE dia = " + dia + ", turno = " + turno + 
+											 ", calle = " + calle + ", altura = " + altura + 
+											 ", legajo = " + legajo);
+			
+			if (!rs.isBeforeFirst() ) { // No hay un inspector asociado a la ubicacion para el dia y turno asociado.
+				   System.out.println("No data"); 
+			} 
+		
+		} catch (java.sql.SQLException ex) {
+			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
+			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
+			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
+		}
+		
+		// De no ser asi, no se generaron las multas y se debera mostrar un mensaje indicando que el inspector no esta
+		// autorizado para labrar multas en esa ubicacion.
+
+		// Registrar acceso del inspector al parquimetro
 		// Obtener fecha y hora actual, para comparar con la asociada del inspector.
 		
 		try {
