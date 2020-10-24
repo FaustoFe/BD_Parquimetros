@@ -106,7 +106,8 @@ public class GUI_Login {
 		btnConectarInspector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				cnx = login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
+				//cnx = login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
+				cnx = login.conectarBD("inspector", "inspector");
 				
 				if(cnx != null) { //Exito al conectarse a la base de datos
 					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.INFORMATION_MESSAGE);
