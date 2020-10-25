@@ -7,12 +7,10 @@ import java.util.ArrayList;
 
 public class Inspector {
 
-	private Connection cnx;
 	private int legajo;
 	private ArrayList<String> patentesRegistradas;
 	
-	public Inspector(Connection cnx, int legajo) {
-		this.cnx = cnx;
+	public Inspector(int legajo) {
 		this.legajo = legajo;
 		patentesRegistradas = new ArrayList<String>();
 	}
@@ -26,7 +24,7 @@ public class Inspector {
 		ArrayList<String> resultado = new ArrayList<String>();
 		
 		try {
-			Statement stmt = cnx.createStatement();
+			Statement stmt = Login.getConexion().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT calle, altura, numero FROM parquimetros");
 			
 			while(rs.next()) {
@@ -92,7 +90,7 @@ public class Inspector {
 		// Controlar que el inspector tenga asociada la ubicacion correspondiente al parquimetro seleccionado, 
 		// para el dia y hora en que se realiza la conexion. 
 		try {
-			Statement stmt = cnx.createStatement();
+			Statement stmt = Login.getConexion().createStatement();
 			
 			String id_asociado = getAsociado(stmt, fecha, calle, altura);
 			

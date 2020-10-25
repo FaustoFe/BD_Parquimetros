@@ -5,12 +5,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Admin {
-
-	private Connection cnx;
 	
-	public Admin(Connection cnx) {
-		this.cnx = cnx;
-	}
+	public Admin() {}
 	
 	/*
 	 * Ejecuta una sentencia SQL pasada por parametro (DEVERÍA RETORNAR EL ResultSet CUANDO SE PUEDA)
@@ -23,7 +19,7 @@ public class Admin {
 		
 		try {
 			// Se crea una sentencia jdbc para realizar la consulta
-			stmt = cnx.createStatement();
+			stmt = Login.getConexion().createStatement();
 			
 			isResultSet = stmt.execute(consulta); 
 			if (isResultSet) { //La sentencia tiene ResultSet
@@ -53,7 +49,7 @@ public class Admin {
 		ArrayList<String> resultado = new ArrayList<String>();
 	    
 		try {
-			stmt = cnx.createStatement();
+			stmt = Login.getConexion().createStatement();
 		
 			rslt = stmt.executeQuery("Show tables");
 		    
@@ -83,7 +79,7 @@ public class Admin {
 		ArrayList<String> resultado = new ArrayList<String>();
 	    
 		try {
-			stmt = cnx.createStatement();
+			stmt = Login.getConexion().createStatement();
 			rslt = stmt.executeQuery("DESCRIBE " + tabla);
 		    
 			while(rslt.next()) {
