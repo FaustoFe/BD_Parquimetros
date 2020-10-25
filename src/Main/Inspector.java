@@ -7,10 +7,12 @@ import java.util.ArrayList;
 
 public class Inspector {
 
+	private GUI_Inspector guiInspector;
 	private int legajo;
 	private ArrayList<String> patentesRegistradas;
 	
-	public Inspector(int legajo) {
+	public Inspector(GUI_Inspector guiInspector, int legajo) {
+		this.guiInspector = guiInspector;
 		this.legajo = legajo;
 		patentesRegistradas = new ArrayList<String>();
 	}
@@ -85,6 +87,7 @@ public class Inspector {
 	public ArrayList<ArrayList<String>> conectarParquimetro(String calle, String altura) {
 		
 		ArrayList<ArrayList<String>> patentesMultadas = null;
+		ArrayList<String> patentesError = null;
 		Fecha fecha = new Fecha();
 		
 		// Controlar que el inspector tenga asociada la ubicacion correspondiente al parquimetro seleccionado, 
@@ -96,7 +99,6 @@ public class Inspector {
 			
 			if (id_asociado != null) { // Hay un inspector asociado a la ubicacion para el dia y turno actual.
 				
-				//ResultSet rs = stmt.executeQuery("SELECT patente FROM estacionados WHERE calle = " + calle + " AND altura = " + altura);
 				ResultSet rs = stmt.executeQuery("SELECT patente FROM estacionados WHERE calle = '" + calle + "' AND altura = " + altura);
 				
 				String patente = null;
@@ -120,9 +122,9 @@ public class Inspector {
 					
 				// Genera la lista de multas que se va a retornar, y se añade al batch (para insertarlas posteriormente a la base de datos)
 				patentesMultadas = new ArrayList<ArrayList<String>>();
+				patentesError = new ArrayList<String>();
 				
 				if(!patentesRegistradas.isEmpty()) {
-					String sql;
 					
 					// Obtener siguiente id (numero de la multa)
 					ResultSet rs_id = stmt.executeQuery("SELECT numero FROM multa ORDER BY numero DESC LIMIT 1");
@@ -134,29 +136,41 @@ public class Inspector {
 						ArrayList<String> pMultada = new ArrayList<String>();
 						
 						//CONTINUAR
-						sql = "INSERT INTO multa(numero, fecha, hora, patente, id_asociado_con) VALUES (" + numeroMulta + ", '"+ fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "', '" + p + "', " + id_asociado + ");";
+						try {
+							stmt.execute("INSERT INTO multa(numero, fecha, hora, patente, id_asociado_con) VALUES (" + numeroMulta + ", '"+ fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "', '" + p + "', " + id_asociado + ");");
+							
+							pMultada.add(String.valueOf(numeroMulta));
+							pMultada.add(String.valueOf(fecha.getDateSQL()));
+							pMultada.add(String.valueOf(fecha.getTimeSQL()));
+							pMultada.add(calle);
+							pMultada.add(altura);
+							pMultada.add(p);
+							pMultada.add(String.valueOf(legajo));
+							
+							patentesMultadas.add(pMultada);
+																	
+							++numeroMulta;
 						
-						pMultada.add(String.valueOf(numeroMulta));
-						pMultada.add(String.valueOf(fecha.getDateSQL()));
-						pMultada.add(String.valueOf(fecha.getTimeSQL()));
-						pMultada.add(calle);
-						pMultada.add(altura);
-						pMultada.add(p);
-						pMultada.add(String.valueOf(legajo));
+						} catch(java.sql.SQLException ex) {
+							System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
+							System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
+							System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
+							
+							patentesError.add(p);
+							System.out.println(p);
+						}
 						
-						patentesMultadas.add(pMultada);
-												
-						stmt.addBatch(sql);						
-						++numeroMulta;
-						
-						//EN VES DE USAR BATCH SE PODRÍA INSERTAR NORMAL Y CONTROLAR QUE PATENTES TUVIERON UN ERROR
 					}
+					
+					if(!patentesError.isEmpty()) {
+						guiInspector.cargarListaErrores(patentesError);
+					}
+					
 				}
 				
 				// Registrar acceso del inspector al parquimetro
-				stmt.addBatch("INSERT INTO accede(legajo, id_parq, fecha, hora) VALUES (" + legajo + ", " + id_parq + ", '" + fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "');");
+				stmt.execute("INSERT INTO accede(legajo, id_parq, fecha, hora) VALUES (" + legajo + ", " + id_parq + ", '" + fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "');");
 				
-				int[] b = stmt.executeBatch();
 			} 
 			else {
 				// De no ser asi, no se generaron las multas y se debera mostrar un mensaje indicando que el inspector no esta
