@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.sql.Connection;
 
 import javax.swing.JButton;
@@ -63,6 +64,7 @@ public class GUI_Login {
 		frame.setTitle("Proyecto BD - Parquimetros");
 		frame.getContentPane().setFont(new Font("Dubai", Font.PLAIN, 12));
 		frame.getContentPane().setLayout(null);		
+		frame.setLocationRelativeTo(null);
 		
 				
 		// Labels
@@ -106,16 +108,21 @@ public class GUI_Login {
 		btnConectarInspector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				
 				//cnx = login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
+				//cnx = login.conectarBD("666", "inspector1");
 				cnx = login.conectarBD("inspector", "inspector");
+				
 				
 				if(cnx != null) { //Exito al conectarse a la base de datos
 					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.INFORMATION_MESSAGE);
+					
+					//conectarInspector(cnx, Integer.parseInt(txtLegajo.getText()));
+					conectarInspector(cnx, 666);
+					
 					txtContraseña.setText("");
 					txtLegajo.setText("");
-					frame.setVisible(false);
-					
-					GUI_Inspector gi = new GUI_Inspector(cnx);					
+
 				}
 				else { //Error al conectarse
 					JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);
@@ -145,9 +152,7 @@ public class GUI_Login {
 					
 					if(cnx != null) { //Exito al entrar
 						JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.PLAIN_MESSAGE);
-						
-						frame.setVisible(false);
-						GUI_Admin ga = new GUI_Admin(cnx);
+						conectarAdmin(cnx);
 					}
 					else { //Intentar de nuevo
 						JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);	
@@ -162,7 +167,7 @@ public class GUI_Login {
 		btnSalir = new JButton("Salir");
 		btnSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				login.desconectarBD();
+				desconectarBD();
 				System.exit(0);
 			}
 		});
@@ -170,8 +175,23 @@ public class GUI_Login {
 		btnSalir.setFont(new Font("Dubai", Font.BOLD, 12));
 		btnSalir.setBounds(23, 237, 89, 51);
 		frame.getContentPane().add(btnSalir);		
-		
-		
-		
+	}
+	
+	public void desconectarBD() { //Para desconectar desde los frames
+		login.desconectarBD();
+	}
+	
+	public void conectarAdmin(Connection cnx) {
+		GUI_Admin ga = new GUI_Admin(this, cnx);
+		frame.setVisible(false);
+	}
+	
+	public void conectarInspector(Connection cnx, int legajo) {					
+		GUI_Inspector gi = new GUI_Inspector(this, cnx, legajo);
+		frame.setVisible(false);
+	}
+	
+	public JFrame getFrame() {
+		return this.frame;
 	}
 }

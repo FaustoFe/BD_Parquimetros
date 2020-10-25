@@ -45,6 +45,8 @@ public class GUI_Admin {
 	private JFrame frame;
 
 	private Admin admin;
+	private GUI_Login guiLogin;
+	
 	private JTextField txtSelectFrom;
 	private JLabel lblAtributos, lblTablas; 
 	private JList ListaTablas, ListaAtributos;
@@ -56,12 +58,13 @@ public class GUI_Admin {
 	private JTable TablaDatos;
 	private JScrollPane scrollPane;
 	
-	private final Connection conexion;
+	private final Connection conexion; //Para que lo vean los Listener
 	private JButton btnVolver;
 	
 	
 	
-	public GUI_Admin(Connection cnx) {
+	public GUI_Admin(GUI_Login guiLogin, Connection cnx) {
+		this.guiLogin = guiLogin;
 		conexion = cnx;
 		admin = new Admin(cnx);
 		inicializarGUI();
@@ -77,7 +80,8 @@ public class GUI_Admin {
 		frame.getContentPane().setFont(new Font("Dubai", Font.PLAIN, 12));
 		frame.setBounds(100, 100, 754, 506);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frame.getContentPane().setLayout(null);		
+		frame.setLocationRelativeTo(null);
 		
 		txtSelectFrom = new JTextField();
 		txtSelectFrom.setText("SELECT * FROM conductores");
@@ -85,8 +89,6 @@ public class GUI_Admin {
 		txtSelectFrom.setBounds(20, 11, 689, 30);
 		frame.getContentPane().add(txtSelectFrom);
 		txtSelectFrom.setColumns(10);
-		
-		
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setViewportBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -98,13 +100,10 @@ public class GUI_Admin {
 		TablaDatos.setFont(new Font("Dubai", Font.PLAIN, 14));
 		TablaDatos.setEnabled(false);
 		TablaDatos.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		
 		modeloTabla = new DefaultTableModel();
 		TablaDatos.setModel(modeloTabla);
 		ejecutarSentencia(txtSelectFrom.getText());
 		scrollPane.setViewportView(TablaDatos);		
-		
-		
 		
 		btnEjecutar = new JButton("Ejecutar");
 		btnEjecutar.setFont(new Font("Dubai", Font.PLAIN, 12));
@@ -127,15 +126,12 @@ public class GUI_Admin {
 		ListaTablas.setBounds(463, 113, 110, 309);		
 		modeloLT = new DefaultListModel();
 		ListaTablas.setModel(modeloLT);
-		MouseListener mouseListener = new MouseAdapter() {
-		    public void mouseClicked(MouseEvent e) {
-		        if (e.getClickCount() == 1) {
-		           String nombreTabla = ListaTablas.getSelectedValue().toString();
-		           actualizarListaAtributos(nombreTabla); 
-		         }
-		    }
-		};
-		ListaTablas.addMouseListener(mouseListener);
+		ListaTablas.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+	           String nombreTabla = ListaTablas.getSelectedValue().toString();
+	           actualizarListaAtributos(nombreTabla); 
+			}
+		});
 		frame.getContentPane().add(ListaTablas);
 		
 		
@@ -160,9 +156,9 @@ public class GUI_Admin {
 		btnVolver = new JButton("Volver");
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				//Volver al inicio;
-				
+				guiLogin.getFrame().setVisible(true);
+				guiLogin.desconectarBD();
+				frame.dispose();
 			}
 		});
 		btnVolver.setToolTipText("Volver");
@@ -185,8 +181,6 @@ public class GUI_Admin {
 			}
 		}
 		else {
-			//Sino cambiamos modelo;
-			//modeloTabla.getDataVector().removeAllElements();
 			modeloTabla.setRowCount(0);
 			modeloTabla.fireTableDataChanged();
 		}
