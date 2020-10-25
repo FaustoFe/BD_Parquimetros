@@ -51,9 +51,9 @@ public class GUI_Inspector {
 	private JButton btnVolverMenu;
 
 
-	public GUI_Inspector(GUI_Login guiLogin, Connection cnx, int legajo) {
+	public GUI_Inspector(GUI_Login guiLogin, int legajo) {
 		this.guiLogin = guiLogin;
-		inspector = new Inspector(cnx,legajo); // MANDAR LEGAJO
+		inspector = new Inspector(legajo); // MANDAR LEGAJO
 		inicializarGUI();
 		this.frame.setVisible(true);
 	}
@@ -81,7 +81,7 @@ public class GUI_Inspector {
 				panelPatentes.setVisible(false);
 				
 				guiLogin.getFrame().setVisible(true);
-				guiLogin.desconectarBD();
+				Login.desconectarBD();
 				frame.dispose();				
 			}
 		});

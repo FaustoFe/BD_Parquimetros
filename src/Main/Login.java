@@ -30,7 +30,7 @@ public abstract class Login {
 		try {
 			
 			Statement stmt = cnx.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = " + usuario + " AND password = md5(" + clave + ")");
+			ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = " + usuario + " AND password = md5('" + clave + "')");
 			if(!rs.next()) { // No hay inspector con esos datos
 				cnx = null;
 			}

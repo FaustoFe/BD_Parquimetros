@@ -58,15 +58,13 @@ public class GUI_Admin {
 	private JTable TablaDatos;
 	private JScrollPane scrollPane;
 	
-	private final Connection conexion; //Para que lo vean los Listener
 	private JButton btnVolver;
 	
 	
 	
-	public GUI_Admin(GUI_Login guiLogin, Connection cnx) {
+	public GUI_Admin(GUI_Login guiLogin) {
 		this.guiLogin = guiLogin;
-		conexion = cnx;
-		admin = new Admin(cnx);
+		admin = new Admin();
 		inicializarGUI();
 		actualizarListaTablas();
 		this.frame.setVisible(true);
@@ -157,7 +155,7 @@ public class GUI_Admin {
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				guiLogin.getFrame().setVisible(true);
-				guiLogin.desconectarBD();
+				Login.desconectarBD();
 				frame.dispose();
 			}
 		});
