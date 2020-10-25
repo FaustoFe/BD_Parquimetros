@@ -1,7 +1,5 @@
 package Main;
 
-import java.sql.Connection;
-import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -10,9 +8,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -26,8 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 public class GUI_Inspector {
 
@@ -219,8 +212,21 @@ public class GUI_Inspector {
 				
 				if (opcion == JOptionPane.OK_OPTION) {
 					String direccion = cbUbicaciones.getSelectedItem().toString();
-		        	String[]separado = direccion.split("\\s+"); //Para tener dir y numero
-		        	ArrayList<ArrayList<String>> datos = inspector.conectarParquimetro(separado[0], separado[1]);
+		        	
+					// Separar el string de la ubicacion en calle y altura
+					String[]separado = direccion.split(" ");
+	                String calle = "";
+
+	                for(int i=0;i < separado.length-1; i++) {
+	                    calle+= separado[i];
+	                    if(i != separado.length-2) {
+	                    	calle+=" ";
+	                    }
+	                }
+	 
+	                String altura = separado[separado.length-1];
+	                
+		        	ArrayList<ArrayList<String>> datos = inspector.conectarParquimetro(calle, altura);
 		        	
 		        	if (datos == null)
 		        		JOptionPane.showMessageDialog(null, "Ubicación no asignada", "Error", JOptionPane.CANCEL_OPTION);
@@ -291,6 +297,7 @@ public class GUI_Inspector {
 		lblMultasErroneasPorError.setFont(new Font("Dubai", Font.PLAIN, 12));
 		lblMultasErroneasPorError.setBounds(888, 35, 75, 27);
 		modeloListaErronea = new DefaultListModel();
+		listaErroneas.setModel(modeloListaErronea);
 		panelMulta.add(lblMultasErroneasPorError);
 	}
 	

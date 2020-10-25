@@ -1,5 +1,4 @@
 package Main;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -82,6 +81,7 @@ public class Inspector {
 	 * pasada por parametro para el dia y turno actual.
 	 * En el caso que pueda, se realizaran multas a los vehiculos estacionados cuyas patentes no esten en la base de datos,
 	 * y se registra el acceso del inspector al parquimetro.
+	 * Tambien notifica a la gui 
 	 * Caso contrario retorna null.
 	 */
 	public ArrayList<ArrayList<String>> conectarParquimetro(String calle, String altura) {
@@ -135,7 +135,6 @@ public class Inspector {
 					for(String p : patentesRegistradas) {
 						ArrayList<String> pMultada = new ArrayList<String>();
 						
-						//CONTINUAR
 						try {
 							stmt.execute("INSERT INTO multa(numero, fecha, hora, patente, id_asociado_con) VALUES (" + numeroMulta + ", '"+ fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "', '" + p + "', " + id_asociado + ");");
 							
@@ -157,7 +156,6 @@ public class Inspector {
 							System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 							
 							patentesError.add(p);
-							System.out.println(p);
 						}
 						
 					}
@@ -171,10 +169,6 @@ public class Inspector {
 				// Registrar acceso del inspector al parquimetro
 				stmt.execute("INSERT INTO accede(legajo, id_parq, fecha, hora) VALUES (" + legajo + ", " + id_parq + ", '" + fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "');");
 				
-			} 
-			else {
-				// De no ser asi, no se generaron las multas y se debera mostrar un mensaje indicando que el inspector no esta
-				// autorizado para labrar multas en esa ubicacion.
 			}
 		
 			stmt.close();
