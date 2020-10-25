@@ -53,7 +53,7 @@ public class GUI_Inspector {
 
 	public GUI_Inspector(GUI_Login guiLogin, int legajo) {
 		this.guiLogin = guiLogin;
-		inspector = new Inspector(legajo); // MANDAR LEGAJO
+		inspector = new Inspector(this, legajo); // MANDAR LEGAJO
 		inicializarGUI();
 		this.frame.setVisible(true);
 	}
