@@ -37,23 +37,25 @@ public class GUI_Inspector {
 	private GUI_Login guiLogin;
 	
 	private JPanel panelPatentes, panelUbicacionParquimetro, panelMulta; 
-	private JScrollPane scrollPane;
+	private JScrollPane scrollPaneTablaMultas;
 	private JTextField txtPatente;
-	private JLabel lblPatente, lblListaPatente, lblSeleccionarUbicacion, lbSeleccionarParquimetro, lblMultasLabradas; 
+	private JLabel lblPatente, lblListaPatente, lblSeleccionarUbicacion, lblMultasLabradas; 
 	private JButton btnAddPatente, btnEliminarPatente, btnConfirmarPatentes, btnConfirmarUbicacionParquimetro, btnVolver;
 	private JList listaPatentes;
-	private JComboBox cbUbicaciones, cbParquimetros;
+	private JComboBox cbUbicaciones;
 	private JTable tablaMultas;
 	
 	private DefaultTableModel modeloTabla;
-	private DefaultListModel modeloLista;
+	private DefaultListModel modeloLista,modeloListaErronea;
 	private DefaultComboBoxModel bm;
 	private JButton btnVolverMenu;
+	private JLabel lblMultasErroneasPorError;
+	private JScrollPane scrollPaneListaPatentes;
 
 
 	public GUI_Inspector(GUI_Login guiLogin, int legajo) {
 		this.guiLogin = guiLogin;
-		inspector = new Inspector(this, legajo); // MANDAR LEGAJO
+		inspector = new Inspector(this, legajo);
 		inicializarGUI();
 		this.frame.setVisible(true);
 	}
@@ -61,18 +63,18 @@ public class GUI_Inspector {
 
 	private void inicializarGUI() {
 		frame = new JFrame();
-		frame.setResizable(false);
+		frame.setResizable(true);
 		frame.getContentPane().setBackground(new Color(51, 204, 255));
 		frame.getContentPane().setFont(new Font("Dubai", Font.PLAIN, 12));
 		frame.setFont(new Font("Dubai", Font.PLAIN, 12));
 		frame.setTitle("Tablero inspector");
-		frame.setBounds(100, 100, 640, 448);
+		frame.setBounds(362, 11, 291, 452);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.getContentPane().setLayout(null);
 		
 		btnVolverMenu = new JButton("Volver al login");
-		btnVolverMenu.setBounds(10, 372, 114, 23);
+		btnVolverMenu.setBounds(10, 380, 114, 23);
 		btnVolverMenu.setFont(new Font("Dubai", Font.PLAIN, 12));
 		btnVolverMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -89,28 +91,31 @@ public class GUI_Inspector {
 		
 		
 	
+	
 		
 		panelPatentes = new JPanel();
-		panelPatentes.setBounds(150, 0, 291, 353);
+		panelPatentes.setBounds(0, 0, 275, 350);
 		panelPatentes.setBackground(new Color(51, 204, 255));
-		frame.getContentPane().add(panelPatentes);
 		panelPatentes.setLayout(null);
+		panelPatentes.setVisible(true);
+		frame.getContentPane().add(panelPatentes);
+		
 		
 		panelUbicacionParquimetro = new JPanel();
-		panelUbicacionParquimetro.setBounds(150, 0, 291, 216);
+		panelUbicacionParquimetro.setBounds(0, 0, 275, 350);
 		panelUbicacionParquimetro.setBackground(new Color(51, 204, 255));
-		frame.getContentPane().add(panelUbicacionParquimetro);
 		panelUbicacionParquimetro.setLayout(null);
 		panelUbicacionParquimetro.setVisible(false);
+		frame.getContentPane().add(panelUbicacionParquimetro);
 		
 		panelMulta = new JPanel();
-		panelMulta.setBounds(0, 0, 634, 353);
+		panelMulta.setBounds(0, 0, 980, 370);
 		panelMulta.setBackground(new Color(51, 204, 255));
-		frame.getContentPane().add(panelMulta);
 		panelMulta.setLayout(null);
 		panelMulta.setVisible(false);
+		frame.getContentPane().add(panelMulta);
 		
-		
+
 		
 		
 		//Componentes del panelPatente
@@ -161,18 +166,10 @@ public class GUI_Inspector {
 		panelPatentes.add(btnConfirmarPatentes);
 		
 		lblListaPatente = new JLabel("Listas patentes");
-		lblListaPatente.setBounds(20, 98, 103, 14);
+		lblListaPatente.setBounds(20, 99, 103, 14);
 		lblListaPatente.setHorizontalAlignment(SwingConstants.CENTER);
 		lblListaPatente.setFont(new Font("Dubai", Font.PLAIN, 12));
 		panelPatentes.add(lblListaPatente);
-		
-		listaPatentes = new JList();
-		listaPatentes.setBounds(20, 123, 103, 212);		
-		listaPatentes.setToolTipText("Lista patentes");
-		listaPatentes.setFont(new Font("Dubai", Font.PLAIN, 12));	
-		modeloLista = new DefaultListModel();
-		listaPatentes.setModel(modeloLista);
-		panelPatentes.add(listaPatentes);
 		
 		btnEliminarPatente = new JButton("Eliminar patente");
 		btnEliminarPatente.setBounds(134, 124, 122, 20);
@@ -180,28 +177,19 @@ public class GUI_Inspector {
 		btnEliminarPatente.setFont(new Font("Dubai", Font.PLAIN, 12));
 		panelPatentes.add(btnEliminarPatente);
 		
-
-
-		//Componentes del panelMulta
+		scrollPaneListaPatentes = new JScrollPane();
+		scrollPaneListaPatentes.setBounds(20, 124, 103, 205);
+		panelPatentes.add(scrollPaneListaPatentes);
+		
+		listaPatentes = new JList();
+		scrollPaneListaPatentes.setViewportView(listaPatentes);
+		listaPatentes.setToolTipText("Lista patentes");
+		listaPatentes.setFont(new Font("Dubai", Font.PLAIN, 12));
+		modeloLista = new DefaultListModel();
+		listaPatentes.setModel(modeloLista);
 		
 		
-		lblMultasLabradas = new JLabel("Multas labradas");
-		lblMultasLabradas.setHorizontalAlignment(SwingConstants.CENTER);
-		lblMultasLabradas.setBounds(193, 10, 265, 35);
-		lblMultasLabradas.setFont(new Font("Dubai", Font.PLAIN, 30));
-		panelMulta.add(lblMultasLabradas);
 		
-		scrollPane = new JScrollPane();
-		scrollPane.setToolTipText("Multas que fueron labradas");
-		scrollPane.setBounds(10, 56, 614, 357);
-		panelMulta.add(scrollPane);
-		
-		tablaMultas = new JTable();
-		tablaMultas.setFont(new Font("Dubai", Font.PLAIN, 12));
-		//modeloTabla = new DefaultTableModel( new Object[][] {}, new String[] { "Nro multa", "Fecha", "Hora", "Calle", "Altura", "Patente", "Legajo inspector"});
-		modeloTabla = new DefaultTableModel();
-		tablaMultas.setModel(modeloTabla);
-		scrollPane.setViewportView(tablaMultas);
 		
 		
 
@@ -210,30 +198,18 @@ public class GUI_Inspector {
 		//Componentes del panelUbicacionParquimetro	
 		
 		lblSeleccionarUbicacion = new JLabel("Seleccionar ubicacion");
-		lblSeleccionarUbicacion.setBounds(85, 11, 122, 14);
+		lblSeleccionarUbicacion.setBounds(82, 11, 122, 14);
 		lblSeleccionarUbicacion.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSeleccionarUbicacion.setFont(new Font("Dubai", Font.PLAIN, 12));
 		panelUbicacionParquimetro.add(lblSeleccionarUbicacion);
 		
 		cbUbicaciones = new JComboBox();
-		cbUbicaciones.setBounds(38, 31, 229, 21);
+		cbUbicaciones.setBounds(25, 31, 229, 21);
 		cbUbicaciones.setToolTipText("Ubicaciones");
 		cbUbicaciones.setFont(new Font("Dubai", Font.PLAIN, 12));
 		bm = new DefaultComboBoxModel();
 		cbUbicaciones.setModel(bm);
 		panelUbicacionParquimetro.add(cbUbicaciones);
-		
-		lbSeleccionarParquimetro = new JLabel("Seleccionar parquimetro");
-		lbSeleccionarParquimetro.setBounds(85, 88, 122, 14);
-		panelUbicacionParquimetro.add(lbSeleccionarParquimetro);
-		lbSeleccionarParquimetro.setHorizontalAlignment(SwingConstants.CENTER);
-		lbSeleccionarParquimetro.setFont(new Font("Dubai", Font.PLAIN, 12));
-		
-		cbParquimetros = new JComboBox();
-		cbParquimetros.setBounds(38, 113, 229, 21);
-		panelUbicacionParquimetro.add(cbParquimetros);
-		cbParquimetros.setToolTipText("Parquimetros");
-		cbParquimetros.setFont(new Font("Dubai", Font.PLAIN, 12));
 		
 		btnConfirmarUbicacionParquimetro = new JButton("Confirmar");
 		btnConfirmarUbicacionParquimetro.addActionListener(new ActionListener() {
@@ -252,27 +228,70 @@ public class GUI_Inspector {
 		        		cargarTablaMulta(datos);
 		        		panelUbicacionParquimetro.setVisible(false);
 		        		panelMulta.setVisible(true);
+		        		frame.setBounds(100, 100, 983, 489); //Agrando el frame a tamaño de la tabla
 		        	}
 		        }
 			}
 		});
 		btnConfirmarUbicacionParquimetro.setFont(new Font("Dubai", Font.PLAIN, 12));
-		btnConfirmarUbicacionParquimetro.setBounds(178, 155, 89, 23);
+		btnConfirmarUbicacionParquimetro.setBounds(160, 319, 89, 23);
 		panelUbicacionParquimetro.add(btnConfirmarUbicacionParquimetro);
+			btnVolver = new JButton("Volver");
+			btnVolver.setFont(new Font("Dubai", Font.PLAIN, 12));
+			btnVolver.setBounds(30, 319, 89, 23);
+			btnVolver.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					panelUbicacionParquimetro.setVisible(false);
+					panelPatentes.setVisible(true);
+					bm.removeAllElements();
+				}
+			});
+		panelUbicacionParquimetro.add(btnVolver);
+		
 
 		
-		btnVolver = new JButton("Volver");
-		btnVolver.setFont(new Font("Dubai", Font.PLAIN, 12));
-		btnVolver.setBounds(38, 155, 89, 23);
-		btnVolver.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				panelUbicacionParquimetro.setVisible(false);
-				panelPatentes.setVisible(true);
-				bm.removeAllElements();
-			}
-		});
 
-		panelUbicacionParquimetro.add(btnVolver);
+
+		//Componentes del panelMulta
+		
+		
+		lblMultasLabradas = new JLabel("Multas labradas");
+		lblMultasLabradas.setHorizontalAlignment(SwingConstants.CENTER);
+		lblMultasLabradas.setBounds(193, 15, 265, 35);
+		lblMultasLabradas.setFont(new Font("Dubai", Font.PLAIN, 30));
+		panelMulta.add(lblMultasLabradas);
+		
+		scrollPaneTablaMultas = new JScrollPane();
+		scrollPaneTablaMultas.setToolTipText("Multas que fueron labradas");
+		scrollPaneTablaMultas.setBounds(10, 56, 706, 297);
+		panelMulta.add(scrollPaneTablaMultas);
+		
+		tablaMultas = new JTable();
+		tablaMultas.setFont(new Font("Dubai", Font.PLAIN, 12));
+		modeloTabla = new DefaultTableModel();
+		tablaMultas.setModel(modeloTabla);
+		scrollPaneTablaMultas.setViewportView(tablaMultas);
+		
+		JLabel lblMultasErroneas = new JLabel("Multas no creadas");
+		lblMultasErroneas.setBounds(712, 15, 265, 35);
+		panelMulta.add(lblMultasErroneas);
+		lblMultasErroneas.setHorizontalAlignment(SwingConstants.CENTER);
+		lblMultasErroneas.setFont(new Font("Dubai", Font.PLAIN, 30));
+		
+		JScrollPane scrollPaneListaErronea = new JScrollPane();
+		scrollPaneListaErronea.setBounds(772, 56, 130, 297);
+		panelMulta.add(scrollPaneListaErronea);
+		
+		JList listaErroneas = new JList();
+		listaErroneas.setFont(new Font("Dubai", Font.PLAIN, 12));
+		scrollPaneListaErronea.setViewportView(listaErroneas);
+		
+		lblMultasErroneasPorError = new JLabel("(Por errores)");
+		lblMultasErroneasPorError.setHorizontalAlignment(SwingConstants.CENTER);
+		lblMultasErroneasPorError.setFont(new Font("Dubai", Font.PLAIN, 12));
+		lblMultasErroneasPorError.setBounds(888, 35, 75, 27);
+		modeloListaErronea = new DefaultListModel();
+		panelMulta.add(lblMultasErroneasPorError);
 	}
 	
 	private void cargarUbicaciones() {
@@ -317,6 +336,10 @@ public class GUI_Inspector {
 	}
 	
 	public void cargarListaErrores(ArrayList<String> multasErroneas) {
+		modeloListaErronea.removeAllElements();
 		
+		for(int i = 0; i < multasErroneas.size(); i++) {
+			modeloListaErronea.add(i, multasErroneas.get(i));
+		}		
 	}
 }

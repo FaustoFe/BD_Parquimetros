@@ -38,7 +38,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.EtchedBorder; 
+import javax.swing.border.EtchedBorder;
+import java.awt.Color; 
 
 public class GUI_Admin {
 
@@ -74,6 +75,7 @@ public class GUI_Admin {
 
 	private void inicializarGUI() {
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(51, 204, 255));
 		frame.setResizable(false);
 		frame.getContentPane().setFont(new Font("Dubai", Font.PLAIN, 12));
 		frame.setBounds(100, 100, 754, 506);
@@ -143,12 +145,12 @@ public class GUI_Admin {
 		
 		lblTablas = new JLabel("Tablas");
 		lblTablas.setFont(new Font("Dubai", Font.PLAIN, 14));
-		lblTablas.setBounds(495, 88, 46, 14);
+		lblTablas.setBounds(495, 88, 64, 14);
 		frame.getContentPane().add(lblTablas);
 		
 		lblAtributos = new JLabel("Atributos");
 		lblAtributos.setFont(new Font("Dubai", Font.PLAIN, 14));
-		lblAtributos.setBounds(623, 88, 64, 14);
+		lblAtributos.setBounds(623, 88, 86, 14);
 		frame.getContentPane().add(lblAtributos); 
 		
 		btnVolver = new JButton("Volver");
@@ -161,7 +163,7 @@ public class GUI_Admin {
 		});
 		btnVolver.setToolTipText("Volver");
 		btnVolver.setFont(new Font("Dubai", Font.PLAIN, 12));
-		btnVolver.setBounds(10, 429, 89, 37);
+		btnVolver.setBounds(20, 429, 89, 37);
 		frame.getContentPane().add(btnVolver);
 	}	
 	

@@ -65,30 +65,30 @@ public class GUI_Login {
 				
 		// Labels
 		lblTitulo = new JLabel("Panel de logueo");
-		lblTitulo.setBounds(160, 11, 272, 69);
+		lblTitulo.setBounds(125, 11, 415, 69);
 		lblTitulo.setFont(new Font("Dubai", Font.PLAIN, 40));
 		frame.getContentPane().add(lblTitulo);
 		
 		lblAdmin = new JLabel("Conectar como admin");
 		lblAdmin.setFont(new Font("Dubai", Font.PLAIN, 12));
-		lblAdmin.setBounds(448, 216, 111, 20);
+		lblAdmin.setBounds(447, 216, 159, 20);
 		frame.getContentPane().add(lblAdmin);		
 		
 		lblLegajo = new JLabel("Legajo");
 		lblLegajo.setFont(new Font("Dubai", Font.PLAIN, 15));
-		lblLegajo.setBounds(137, 128, 59, 35);
+		lblLegajo.setBounds(113, 128, 83, 35);
 		frame.getContentPane().add(lblLegajo);
 		
 		lblPassword = new JLabel("Password");
 		lblPassword.setFont(new Font("Dubai", Font.PLAIN, 15));
-		lblPassword.setBounds(137, 159, 59, 35);
+		lblPassword.setBounds(113, 159, 83, 35);
 		frame.getContentPane().add(lblPassword);
 		
 		// Txt & password
 		txtLegajo = new JTextField();
 		txtLegajo.setFont(new Font("Dubai", Font.PLAIN, 12));
 		txtLegajo.setToolTipText("Ingrese legajo");
-		txtLegajo.setBounds(210, 135, 136, 20);
+		txtLegajo.setBounds(181, 135, 165, 20);
 		frame.getContentPane().add(txtLegajo);
 		txtLegajo.setColumns(10);
 		
@@ -96,7 +96,7 @@ public class GUI_Login {
 		txtContraseña.setFont(new Font("Dubai", Font.PLAIN, 12));
 		txtContraseña.setEchoChar('*');
 		txtContraseña.setToolTipText("Ingrese contrase\u00F1a");
-		txtContraseña.setBounds(210, 166, 136, 20);
+		txtContraseña.setBounds(181, 166, 165, 20);
 		frame.getContentPane().add(txtContraseña);
 		
 		// Botones
