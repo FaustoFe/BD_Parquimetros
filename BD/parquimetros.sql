@@ -247,6 +247,7 @@ GRANT SELECT ON parquimetros.inspectores TO 'inspector'@'%';
 GRANT SELECT ON parquimetros.asociado_con TO 'inspector'@'%';
 GRANT SELECT ON parquimetros.estacionados TO 'inspector'@'%';
 GRANT SELECT ON parquimetros.parquimetros TO 'inspector'@'%';
+GRANT SELECT ON parquimetros.multa TO 'inspector'@'%';
 GRANT INSERT ON parquimetros.multa TO 'inspector'@'%';
 GRANT INSERT ON parquimetros.accede TO 'inspector'@'%';
 

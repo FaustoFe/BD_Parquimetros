@@ -14,12 +14,45 @@ public class Login {
 		
 	}
 	
+	/*
+	 * Retorna una conexion si la clave es correcta (solo se utiliza para admin).
+	 */
 	public Connection conectarBD(String clave) {
-		return conectarBD("admin", clave);
+		return establecerConexion("admin", clave);
 	}
 	
+	/*
+	 * Retorna una conexion si los datos corresponden a un inspector.
+	 */
 	public Connection conectarBD(String usuario, String clave) {
+		establecerConexion("inspector", "inspector");
+		
+		try {
+			
+			Statement stmt = cnx.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspector WHERE legajo = " + usuario + " AND password = md5(" + clave + ")");
+			if(!rs.next()) { // No hay inspector con esos datos
+				cnx = null;
+			}
+			
+			rs.close();
+			stmt.close();
+			
+		} catch (java.sql.SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+		
+		return cnx;
+	}
 	
+	
+	/*
+	 * Retorna una conexion si los datos son correctos.
+	 */
+	private Connection establecerConexion(String usuario, String clave) {
+		
 		// Conexión con el servidor			
 		java.sql.DriverManager.setLoginTimeout(10);
 		
@@ -35,7 +68,9 @@ public class Login {
 			System.out.println("SQLState: " + ex.getSQLState());
 			System.out.println("VendorError: " + ex.getErrorCode());
 		}
+		
 		return cnx;
+		
 	}
 	
 	public void desconectarBD() {
@@ -50,6 +85,6 @@ public class Login {
 	            System.out.println("VendorError: " + ex.getErrorCode());
 	         }
 	      }
-	  }
+	}
 	
 }

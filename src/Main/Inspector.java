@@ -62,6 +62,11 @@ public class Inspector {
 		ResultSet rs = null;
 		
 		try {
+//			String sql = "SELECT id_asociado_con " + 
+//					"FROM asociado_con " + 
+//					"WHERE dia = " + dia + " AND turno = " + turno + 
+//					" AND calle = " + calle + " AND altura = " + altura + 
+//					" AND legajo = " + legajo;
 			String sql = "SELECT id_asociado_con " + 
 					"FROM asociado_con " + 
 					"WHERE dia = '" + dia + "' AND turno = '" + turno + 
@@ -102,10 +107,12 @@ public class Inspector {
 		try {
 			Statement stmt = cnx.createStatement();
 			
-			String id_asociado = getAsociado(stmt, fecha, calle, altura);
+			//String id_asociado = getAsociado(stmt, fecha, calle, altura);
+			String id_asociado = "id_PRUEBA";
 			
 			if (id_asociado != null) { // Hay un inspector asociado a la ubicacion para el dia y turno actual.
 				
+				//ResultSet rs = stmt.executeQuery("SELECT patente FROM estacionados WHERE calle = " + calle + " AND altura = " + altura);
 				ResultSet rs = stmt.executeQuery("SELECT patente FROM estacionados WHERE calle = '" + calle + "' AND altura = " + altura);
 				
 				String patente = null;
@@ -122,22 +129,19 @@ public class Inspector {
 				
 				if(!patentesRegistradas.isEmpty()) {
 					String sql;
-					//ResultSet rs_id = stmt.executeQuery("SELECT numero FROM multa ORDER BY numero ASC LIMIT 1");
-					//rs_id.next();
-					//int numeroMulta = Integer.parseInt(rs_id.getString("numero")) + 1;
-					//rs_id.close();
+					
+					// Obtener siguiente id (numero de la multa)
+					ResultSet rs_id = stmt.executeQuery("SELECT numero FROM multa ORDER BY numero ASC LIMIT 1");
+					rs_id.next();
+					int numeroMulta = Integer.parseInt(rs_id.getString("numero")) + 1;
+					rs_id.close();
 					
 					for(String p : patentesRegistradas) {
 						ArrayList<String> pMultada = new ArrayList<String>();
 						
 						//CONTINUAR
-						sql = "INSERT INTO multa(fecha, hora, patente, id_asociado_con) VALUES ('"+ fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "', " + p + ", " + id_asociado + ");";
-						System.out.println(sql);
-						stmt.execute(sql);
-						ResultSet rs_id = stmt.getResultSet();
-						rs_id.next();
-						int numeroMulta = Integer.parseInt(rs_id.getString("ID"));
-						rs_id.close();
+						sql = "INSERT INTO multa(numero, fecha, hora, patente, id_asociado_con) VALUES (" + numeroMulta + ", " + fecha.getDateSQL() + ", " + fecha.getTimeSQL() + ", " + p + ", " + id_asociado + ");";
+//						sql = "INSERT INTO multa(fecha, hora, patente, id_asociado_con) VALUES ('"+ fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "', " + p + ", " + id_asociado + ");";
 						
 						pMultada.add(String.valueOf(numeroMulta));
 						pMultada.add(String.valueOf(fecha.getDateSQL()));
@@ -151,11 +155,11 @@ public class Inspector {
 						
 						
 						
-						//stmt.addBatch(sql);
+						stmt.addBatch(sql);
 						//stmt.addBatch("INSERT INTO multa(numero, fecha, hora, patente, id_asociado_con) VALUES (" + numeroMulta + ", '" + 
 						//				fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "', " + p + ", " + id_asociado + ");");
 						
-						//++numeroMulta;
+						++numeroMulta;
 					}
 				}
 				
