@@ -316,7 +316,7 @@ public class GUI_Inspector {
 	    //resizeColumnWidth(TablaDatos);
 	}
 	
-	private void cargarListaErrores(ArrayList<String> multasErroneas) {
+	public void cargarListaErrores(ArrayList<String> multasErroneas) {
 		
 	}
 }
