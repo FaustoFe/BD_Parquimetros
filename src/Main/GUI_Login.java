@@ -109,9 +109,7 @@ public class GUI_Login {
 			public void actionPerformed(ActionEvent e) {
 				
 				
-				//cnx = login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
-				//cnx = login.conectarBD("666", "inspector1");
-				cnx = login.conectarBD("inspector", "inspector");
+				cnx = login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
 				
 				
 				if(cnx != null) { //Exito al conectarse a la base de datos

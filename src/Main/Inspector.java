@@ -3,10 +3,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Dictionary;
 
 public class Inspector {
 
@@ -62,16 +59,7 @@ public class Inspector {
 		ResultSet rs = null;
 		
 		try {
-//			String sql = "SELECT id_asociado_con " + 
-//					"FROM asociado_con " + 
-//					"WHERE dia = " + dia + " AND turno = " + turno + 
-//					" AND calle = " + calle + " AND altura = " + altura + 
-//					" AND legajo = " + legajo;
-			String sql = "SELECT id_asociado_con " + 
-					"FROM asociado_con " + 
-					"WHERE dia = '" + dia + "' AND turno = '" + turno + 
-					"' AND calle = '" + calle + "' AND altura = " + altura + 
-					" AND legajo = " + legajo;
+			String sql = "SELECT id_asociado_con " + "FROM asociado_con " + "WHERE dia = '" + dia + "' AND turno = '" + turno + "' AND calle = '" + calle + "' AND altura = " + altura + " AND legajo = " + legajo;
 			rs = stmt.executeQuery(sql);
 		
 			if (rs.next()) {
@@ -79,7 +67,6 @@ public class Inspector {
 			}
 			
 			rs.close();
-		
 		
 		} catch (java.sql.SQLException ex) {
 			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
@@ -107,8 +94,7 @@ public class Inspector {
 		try {
 			Statement stmt = cnx.createStatement();
 			
-			//String id_asociado = getAsociado(stmt, fecha, calle, altura);
-			String id_asociado = "id_PRUEBA";
+			String id_asociado = getAsociado(stmt, fecha, calle, altura);
 			
 			if (id_asociado != null) { // Hay un inspector asociado a la ubicacion para el dia y turno actual.
 				
@@ -124,6 +110,16 @@ public class Inspector {
 				}
 				rs.close();
 				
+				ResultSet rs_id_parq = stmt.executeQuery("SELECT id_parq FROM parquimetros WHERE calle = '" + calle + "' AND altura = " + altura);
+				String id_parq = null;
+				if(rs_id_parq.next()){
+					id_parq = rs_id_parq.getString("id_parq");
+				}
+				else {
+					throw new SQLException("Ocurrió un error en la obtencion de la id del parquimetro");
+				}
+				rs_id_parq.close();
+					
 				// Genera la lista de multas que se va a retornar, y se añade al batch (para insertarlas posteriormente a la base de datos)
 				patentesMultadas = new ArrayList<ArrayList<String>>();
 				
@@ -131,7 +127,7 @@ public class Inspector {
 					String sql;
 					
 					// Obtener siguiente id (numero de la multa)
-					ResultSet rs_id = stmt.executeQuery("SELECT numero FROM multa ORDER BY numero ASC LIMIT 1");
+					ResultSet rs_id = stmt.executeQuery("SELECT numero FROM multa ORDER BY numero DESC LIMIT 1");
 					rs_id.next();
 					int numeroMulta = Integer.parseInt(rs_id.getString("numero")) + 1;
 					rs_id.close();
@@ -140,8 +136,7 @@ public class Inspector {
 						ArrayList<String> pMultada = new ArrayList<String>();
 						
 						//CONTINUAR
-						sql = "INSERT INTO multa(numero, fecha, hora, patente, id_asociado_con) VALUES (" + numeroMulta + ", " + fecha.getDateSQL() + ", " + fecha.getTimeSQL() + ", " + p + ", " + id_asociado + ");";
-//						sql = "INSERT INTO multa(fecha, hora, patente, id_asociado_con) VALUES ('"+ fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "', " + p + ", " + id_asociado + ");";
+						sql = "INSERT INTO multa(numero, fecha, hora, patente, id_asociado_con) VALUES (" + numeroMulta + ", '"+ fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "', '" + p + "', " + id_asociado + ");";
 						
 						pMultada.add(String.valueOf(numeroMulta));
 						pMultada.add(String.valueOf(fecha.getDateSQL()));
@@ -152,19 +147,16 @@ public class Inspector {
 						pMultada.add(String.valueOf(legajo));
 						
 						patentesMultadas.add(pMultada);
-						
-						
-						
-						stmt.addBatch(sql);
-						//stmt.addBatch("INSERT INTO multa(numero, fecha, hora, patente, id_asociado_con) VALUES (" + numeroMulta + ", '" + 
-						//				fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "', " + p + ", " + id_asociado + ");");
-						
+												
+						stmt.addBatch(sql);						
 						++numeroMulta;
+						
+						//EN VES DE USAR BATCH SE PODRÍA INSERTAR NORMAL Y CONTROLAR QUE PATENTES TUVIERON UN ERROR
 					}
 				}
 				
 				// Registrar acceso del inspector al parquimetro
-				stmt.addBatch("INSERT INTO accede(legajo, id_parq, fecha, hora) VALUES (" + legajo + ", " + null + ", " + fecha.getDateSQL() + ", " + fecha.getTimeSQL() + ");");
+				stmt.addBatch("INSERT INTO accede(legajo, id_parq, fecha, hora) VALUES (" + legajo + ", " + id_parq + ", '" + fecha.getDateSQL() + "', '" + fecha.getTimeSQL() + "');");
 				
 				int[] b = stmt.executeBatch();
 			} 
