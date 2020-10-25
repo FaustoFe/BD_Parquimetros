@@ -6,31 +6,31 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
-public class Login {
+public abstract class Login {
 
-	private Connection cnx = null;
+	private static Connection cnx = null;
 
-	public Login() {
-		
-	}
+//	public Login() {
+//		
+//	}
 	
 	/*
 	 * Retorna una conexion si la clave es correcta (solo se utiliza para admin).
 	 */
-	public Connection conectarBD(String clave) {
+	public static Connection conectarBD(String clave) {
 		return establecerConexion("admin", clave);
 	}
 	
 	/*
 	 * Retorna una conexion si los datos corresponden a un inspector.
 	 */
-	public Connection conectarBD(String usuario, String clave) {
+	public static Connection conectarBD(String usuario, String clave) {
 		establecerConexion("inspector", "inspector");
 		
 		try {
 			
 			Statement stmt = cnx.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspector WHERE legajo = " + usuario + " AND password = md5(" + clave + ")");
+			ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = " + usuario + " AND password = md5(" + clave + ")");
 			if(!rs.next()) { // No hay inspector con esos datos
 				cnx = null;
 			}
@@ -42,8 +42,8 @@ public class Login {
 			System.out.println("SQLException: " + ex.getMessage());
 			System.out.println("SQLState: " + ex.getSQLState());
 			System.out.println("VendorError: " + ex.getErrorCode());
+			cnx = null;
 		}
-		
 		return cnx;
 	}
 	
@@ -51,7 +51,7 @@ public class Login {
 	/*
 	 * Retorna una conexion si los datos son correctos.
 	 */
-	private Connection establecerConexion(String usuario, String clave) {
+	private static Connection establecerConexion(String usuario, String clave) {
 		
 		// Conexión con el servidor			
 		java.sql.DriverManager.setLoginTimeout(10);
@@ -73,11 +73,11 @@ public class Login {
 		
 	}
 	
-	public void desconectarBD() {
-	      if (this.cnx != null) {
+	public static void desconectarBD() {
+	      if (cnx != null) {
 	         try {
-	            this.cnx.close();
-	            this.cnx = null;
+	            cnx.close();
+	            cnx = null;
 	         }
 	         catch (SQLException ex) {
 	            System.out.println("SQLException: " + ex.getMessage());
@@ -85,6 +85,10 @@ public class Login {
 	            System.out.println("VendorError: " + ex.getErrorCode());
 	         }
 	      }
+	}
+	
+	public static Connection getConexion() {
+		return cnx;
 	}
 	
 }
