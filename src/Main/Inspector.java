@@ -89,7 +89,7 @@ public class Inspector {
 	 * pasada por parametro para el dia y turno actual.
 	 * En el caso que pueda, se realizaran multas a los vehiculos estacionados cuyas patentes no esten en la base de datos,
 	 * y se registra el acceso del inspector al parquimetro.
-	 * Caso contrario muestra un mensaje notificando que el inspector no esta autorizado a labrar multas. 
+	 * Caso contrario retorna null.
 	 */
 	public ArrayList<ArrayList<String>> conectarParquimetro(String calle, String altura) {
 		
@@ -118,6 +118,7 @@ public class Inspector {
 				
 				// Genera la lista de multas que se va a retornar, y se añade al batch (para insertarlas posteriormente a la base de datos)
 				patentesMultadas = new ArrayList<ArrayList<String>>();
+				
 				if(!patentesRegistradas.isEmpty()) {
 					ResultSet rs_id = stmt.executeQuery("SELECT numero FROM multa ORDER BY numero ASC LIMIT 1");
 					rs_id.next();
@@ -143,12 +144,6 @@ public class Inspector {
 					}
 				}
 				
-				// Generar multas correspondientes
-				// Retornar un listado de las multas labradas con la siguiente informacion: numero de 
-				// multa, fecha, hora, calle, altura, patente del auto y legajo del inspector.
-				
-				
-				
 				// Registrar acceso del inspector al parquimetro
 				stmt.addBatch("INSERT INTO accede(legajo, id_parq, fecha, hora) VALUES (" + legajo + ", " + null + ", " + fecha.getDateSQL() + ", " + fecha.getTimeSQL() + ")");
 				
@@ -166,6 +161,8 @@ public class Inspector {
 			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
 			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 		}
+		
+		patentesRegistradas = new ArrayList<String>();
 		
 		return patentesMultadas;
 	}
