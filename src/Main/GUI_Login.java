@@ -118,7 +118,7 @@ public class GUI_Login {
 					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.INFORMATION_MESSAGE);
 					
 					//conectarInspector(cnx, Integer.parseInt(txtLegajo.getText()));
-					conectarInspector(cnx, 666);
+					conectarInspector(cnx, 6666);
 					
 					txtContraseña.setText("");
 					txtLegajo.setText("");

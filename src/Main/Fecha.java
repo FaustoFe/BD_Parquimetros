@@ -68,8 +68,11 @@ public class Fecha {
 	    dateSQL = java.sql.Date.valueOf((new SimpleDateFormat("yyyy-MM-dd")).format(dNow));
 	    
 	    // Set del dateSQL
-	    timeSQL = java.sql.Time.valueOf((new SimpleDateFormat("HH-mm-ss")).format(dNow));
+	    timeSQL = java.sql.Time.valueOf((new SimpleDateFormat("HH:mm:ss")).format(dNow));
 	    
+	    //SACAR
+	    dia = "Do";
+	    turno = "M";
 	}
 
 
