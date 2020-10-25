@@ -64,9 +64,9 @@ public class Inspector {
 		try {
 			rs = stmt.executeQuery("SELECT id_asociado_con " + 
 									"FROM asociado_con " + 
-									"WHERE dia = " + dia + "AND turno = " + turno + 
-									"AND calle = " + calle + "AND altura = " + altura + 
-									"AND legajo = " + legajo);
+									"WHERE dia = " + dia + " AND turno = " + turno + 
+									" AND calle = " + calle + " AND altura = " + altura + 
+									" AND legajo = " + legajo);
 		
 			if (rs.next()) {
 				resultado = rs.getString("id_asociado_con");
@@ -105,7 +105,7 @@ public class Inspector {
 			
 			if (id_asociado != null) { // Hay un inspector asociado a la ubicacion para el dia y turno actual.
 				
-				ResultSet rs = stmt.executeQuery("SELECT patente FROM estacionados WHERE calle = " + calle + "AND altura = " + altura);
+				ResultSet rs = stmt.executeQuery("SELECT patente FROM estacionados WHERE calle = " + calle + " AND altura = " + altura);
 				
 				String patente = null;
 				while(rs.next()){
