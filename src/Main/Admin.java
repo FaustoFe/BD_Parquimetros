@@ -5,7 +5,11 @@ import java.util.ArrayList;
 
 public class Admin {
 	
-	public Admin() {}
+	private GUI_Admin guiAdmin;
+	
+	public Admin(GUI_Admin guiAdmin) {
+		this.guiAdmin = guiAdmin;
+	}
 	
 	/*
 	 * Ejecuta una sentencia SQL pasada por parametro (DEVERÍA RETORNAR EL ResultSet CUANDO SE PUEDA)
@@ -25,15 +29,12 @@ public class Admin {
 				rslt = stmt.getResultSet();
 			}
 			
-			//stmt.close();
-			
 		} catch (java.sql.SQLException ex) {
-			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
-			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
-			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
-			/*
-			 * Mostrar mensaje de error.
-			 */
+//			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
+//			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
+//			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
+	
+			guiAdmin.mostrarMensaje("Mensaje: " + ex.getMessage());
 		}
 		return rslt;
 	}
@@ -60,9 +61,9 @@ public class Admin {
 		    stmt.close();
 	
 		} catch (java.sql.SQLException ex) {
-			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
-			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
-			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
+//			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
+//			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
+//			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 		}
 		    
 	    return resultado;
@@ -89,9 +90,9 @@ public class Admin {
 		    stmt.close();
 	
 		} catch (java.sql.SQLException ex) {
-			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
-			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
-			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
+//			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
+//			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
+//			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 		}
 	    
 	    return resultado;

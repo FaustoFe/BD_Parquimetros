@@ -9,41 +9,42 @@ public abstract class Login {
 
 	private static Connection cnx = null;
 
-//	public Login() {
-//		
-//	}
-	
 	/*
 	 * Retorna una conexion si la clave es correcta (solo se utiliza para admin).
 	 */
-	public static Connection conectarBD(String clave) {
-		return establecerConexion("admin", clave);
+	public static void conectarBD(String clave) {
+		establecerConexion("admin", clave);
 	}
 	
 	/*
 	 * Retorna una conexion si los datos corresponden a un inspector.
 	 */
-	public static Connection conectarBD(String usuario, String clave) {
+	public static String conectarBD(String usuario, String clave) {
 		establecerConexion("inspector", "inspector");
-		
+		String nombreApellido = null;
 		try {
 			
 			Statement stmt = cnx.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = " + usuario + " AND password = md5('" + clave + "')");
 			if(!rs.next()) { // No hay inspector con esos datos
+				
 				cnx = null;
+			}
+			else {
+				nombreApellido = rs.getString("nombre") + " " + rs.getString("apellido");
 			}
 			
 			rs.close();
 			stmt.close();
 			
 		} catch (java.sql.SQLException ex) {
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
+//			System.out.println("SQLException: " + ex.getMessage());
+//			System.out.println("SQLState: " + ex.getSQLState());
+//			System.out.println("VendorError: " + ex.getErrorCode());
 			cnx = null;
 		}
-		return cnx;
+		
+		return nombreApellido;
 	}
 	
 	
@@ -63,9 +64,9 @@ public abstract class Login {
 		try {
 			cnx = java.sql.DriverManager.getConnection(url, usuario, clave);
 		} catch (java.sql.SQLException ex) {
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
+//			System.out.println("SQLException: " + ex.getMessage());
+//			System.out.println("SQLState: " + ex.getSQLState());
+//			System.out.println("VendorError: " + ex.getErrorCode());
 		}
 		
 		return cnx;
@@ -79,9 +80,9 @@ public abstract class Login {
 	            cnx = null;
 	         }
 	         catch (SQLException ex) {
-	            System.out.println("SQLException: " + ex.getMessage());
-	            System.out.println("SQLState: " + ex.getSQLState());
-	            System.out.println("VendorError: " + ex.getErrorCode());
+//	            System.out.println("SQLException: " + ex.getMessage());
+//	            System.out.println("SQLState: " + ex.getSQLState());
+//	            System.out.println("VendorError: " + ex.getErrorCode());
 	         }
 	      }
 	}

@@ -27,6 +27,7 @@ public class GUI_Inspector {
 	private JFrame frame;
 	
 	private Inspector inspector;
+	private String nombreInspector;
 	private GUI_Login guiLogin;
 	
 	private JPanel panelPatentes, panelUbicacionParquimetro, panelMulta; 
@@ -46,8 +47,9 @@ public class GUI_Inspector {
 	private JScrollPane scrollPaneListaPatentes;
 
 
-	public GUI_Inspector(GUI_Login guiLogin, int legajo) {
+	public GUI_Inspector(GUI_Login guiLogin, int legajo, String nombreInspector) {
 		this.guiLogin = guiLogin;
+		this.nombreInspector = nombreInspector;
 		inspector = new Inspector(this, legajo);
 		inicializarGUI();
 		this.frame.setVisible(true);
@@ -56,11 +58,11 @@ public class GUI_Inspector {
 
 	private void inicializarGUI() {
 		frame = new JFrame();
-		frame.setResizable(true);
+		frame.setResizable(false);
 		frame.getContentPane().setBackground(new Color(51, 204, 255));
 		frame.getContentPane().setFont(new Font("Dubai", Font.PLAIN, 12));
 		frame.setFont(new Font("Dubai", Font.PLAIN, 12));
-		frame.setTitle("Tablero inspector");
+		frame.setTitle("Inspector: " + nombreInspector);
 		frame.setBounds(362, 11, 291, 452);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
@@ -165,6 +167,15 @@ public class GUI_Inspector {
 		panelPatentes.add(lblListaPatente);
 		
 		btnEliminarPatente = new JButton("Eliminar patente");
+		btnEliminarPatente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(listaPatentes.getSelectedValue() != null) {
+		           String patente = listaPatentes.getSelectedValue().toString();
+		           inspector.removePatente(patente);
+		           modeloLista.removeElement(patente);
+				}				
+			}
+		});
 		btnEliminarPatente.setBounds(134, 124, 122, 20);
 		btnEliminarPatente.setToolTipText("Eliminar patente");
 		btnEliminarPatente.setFont(new Font("Dubai", Font.PLAIN, 12));
@@ -228,9 +239,11 @@ public class GUI_Inspector {
 	                
 		        	ArrayList<ArrayList<String>> datos = inspector.conectarParquimetro(calle, altura);
 		        	
-		        	if (datos == null)
+		        	if (datos == null) {
 		        		JOptionPane.showMessageDialog(null, "Ubicación no asignada", "Error", JOptionPane.CANCEL_OPTION);
+		        	}
 		        	else {
+		        		inspector.limpiarListaPatentes();
 		        		cargarTablaMulta(datos);
 		        		panelUbicacionParquimetro.setVisible(false);
 		        		panelMulta.setVisible(true);

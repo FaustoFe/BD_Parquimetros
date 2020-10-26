@@ -25,13 +25,6 @@ public class GUI_Login {
 	private JPasswordField txtContraseña;
 	
 	
-	
-	/*
-	public static void mostrarMensaje(String s) {
-		JOptionPane.showMessageDialog(null, "asd","asd", JOptionPane.INFORMATION_MESSAGE);
-	}
-	*/
-
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -104,14 +97,13 @@ public class GUI_Login {
 		btnConectarInspector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				
-				Login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
+				String nombreInspector = Login.conectarBD(txtLegajo.getText(), txtContraseña.getText());
 				
 				
 				if(Login.getConexion() != null) { //Exito al conectarse a la base de datos
 					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.INFORMATION_MESSAGE);
 
-					inicializarInspector(Integer.parseInt(txtLegajo.getText()));
+					inicializarInspector(Integer.parseInt(txtLegajo.getText()), nombreInspector);
 				}
 				else { //Error al conectarse
 					JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);
@@ -168,8 +160,8 @@ public class GUI_Login {
 	}
 	
 	
-	private void inicializarInspector(int legajo) {
-		GUI_Inspector gi = new GUI_Inspector(this, legajo);
+	private void inicializarInspector(int legajo, String nombreInspector) {
+		GUI_Inspector gi = new GUI_Inspector(this, legajo, nombreInspector);
 		frame.setVisible(false);
 	}
 	

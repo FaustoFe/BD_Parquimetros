@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -65,7 +66,7 @@ public class GUI_Admin {
 	
 	public GUI_Admin(GUI_Login guiLogin) {
 		this.guiLogin = guiLogin;
-		admin = new Admin();
+		admin = new Admin(this);
 		inicializarGUI();
 		actualizarListaTablas();
 		this.frame.setVisible(true);
@@ -78,7 +79,7 @@ public class GUI_Admin {
 		frame.getContentPane().setBackground(new Color(51, 204, 255));
 		frame.setResizable(false);
 		frame.getContentPane().setFont(new Font("Dubai", Font.PLAIN, 12));
-		frame.setBounds(100, 100, 754, 506);
+		frame.setBounds(100, 100, 754, 533);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);		
 		frame.setLocationRelativeTo(null);
@@ -91,6 +92,7 @@ public class GUI_Admin {
 		txtSelectFrom.setColumns(10);
 		
 		scrollPane = new JScrollPane();
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollPane.setViewportBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		scrollPane.setBounds(20, 113, 415, 309);
 		frame.getContentPane().add(scrollPane);
@@ -99,7 +101,7 @@ public class GUI_Admin {
 		TablaDatos.setRowSelectionAllowed(false);
 		TablaDatos.setFont(new Font("Dubai", Font.PLAIN, 14));
 		TablaDatos.setEnabled(false);
-		TablaDatos.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		TablaDatos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		modeloTabla = new DefaultTableModel();
 		TablaDatos.setModel(modeloTabla);
 		ejecutarSentencia(txtSelectFrom.getText());
@@ -128,8 +130,10 @@ public class GUI_Admin {
 		ListaTablas.setModel(modeloLT);
 		ListaTablas.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-	           String nombreTabla = ListaTablas.getSelectedValue().toString();
-	           actualizarListaAtributos(nombreTabla); 
+				if(ListaTablas.getSelectedValue() != null) {
+		           String nombreTabla = ListaTablas.getSelectedValue().toString();
+		           actualizarListaAtributos(nombreTabla); 
+				}
 			}
 		});
 		frame.getContentPane().add(ListaTablas);
@@ -163,7 +167,7 @@ public class GUI_Admin {
 		});
 		btnVolver.setToolTipText("Volver");
 		btnVolver.setFont(new Font("Dubai", Font.PLAIN, 12));
-		btnVolver.setBounds(20, 429, 89, 37);
+		btnVolver.setBounds(20, 446, 89, 37);
 		frame.getContentPane().add(btnVolver);
 	}	
 	
@@ -173,11 +177,11 @@ public class GUI_Admin {
 		if (rs != null) {
 			try {
 				actualizarTabla(rs);
-				rs.close();	
+				rs.close();
 			} catch (SQLException ex) {
-				System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
-				System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
-				System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
+//				System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
+//				System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
+//				System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 			}
 		}
 		else {
@@ -253,6 +257,13 @@ public class GUI_Admin {
 	        columnModel.getColumn(column).setPreferredWidth(width);
 	    }
 	}
+	
+	
+	
+	public static void mostrarMensaje(String s) {
+		JOptionPane.showMessageDialog(null, s,"Mensaje", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
 	
 	
 }

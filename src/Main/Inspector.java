@@ -151,9 +151,9 @@ public class Inspector {
 							++numeroMulta;
 						
 						} catch(java.sql.SQLException ex) {
-							System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
-							System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
-							System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
+							//System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
+							//System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
+							//System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 							
 							patentesError.add(p);
 						}
@@ -178,9 +178,7 @@ public class Inspector {
 			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
 			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 		}
-		
-		patentesRegistradas = new ArrayList<String>();
-		
+				
 		return patentesMultadas;
 	}
 	
@@ -193,7 +191,7 @@ public class Inspector {
 		return patentesRegistradas.remove(patente);
 	}
 	
-	public void limpiarListaPatentes(String patente) {
+	public void limpiarListaPatentes() {
 		patentesRegistradas = new ArrayList<String>();
 	}
 	
