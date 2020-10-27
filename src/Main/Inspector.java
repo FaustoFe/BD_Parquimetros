@@ -2,6 +2,7 @@ package Main;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Inspector {
 
@@ -106,7 +107,7 @@ public class Inspector {
 	public ArrayList<ArrayList<String>> conectarParquimetro(String calle, String altura, String id_parq) {
 		
 		ArrayList<ArrayList<String>> patentesMultadas = null;
-		ArrayList<String> patentesError = null;
+		HashMap<String, String> patentesError = null;
 		Fecha fecha = new Fecha();
 		
 		// Controlar que el inspector tenga asociada la ubicacion correspondiente al parquimetro seleccionado, 
@@ -131,7 +132,7 @@ public class Inspector {
 					
 				// Genera la lista de multas que se va a retornar, y se añade al batch (para insertarlas posteriormente a la base de datos)
 				patentesMultadas = new ArrayList<ArrayList<String>>();
-				patentesError = new ArrayList<String>();
+				patentesError = new HashMap<String, String>();
 				
 				if(!patentesRegistradas.isEmpty()) {
 					
@@ -164,8 +165,7 @@ public class Inspector {
 							//System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
 							//System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 							
-							patentesError.add(p);
-//							patentesError.add(p,ex.getMessage()); HashMap con patentes y error
+							patentesError.put(p, ex.getMessage());
 						}
 						
 					}
