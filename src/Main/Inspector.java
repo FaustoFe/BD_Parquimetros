@@ -25,7 +25,7 @@ public class Inspector {
 		
 		try {
 			Statement stmt = Login.getConexion().createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT calle, altura FROM parquimetros");
+			ResultSet rs = stmt.executeQuery("SELECT DISTINCT calle, altura FROM parquimetros");
 			
 			while(rs.next()) {
 				resultado.add(rs.getString("calle") + " " + rs.getString("altura"));
@@ -48,7 +48,7 @@ public class Inspector {
 		
 		try {
 			Statement stmt = Login.getConexion().createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT id_parq FROM parquimetros WHERE calle = " + calle + ", AND altura = " + altura);
+			ResultSet rs = stmt.executeQuery("SELECT id_parq FROM parquimetros WHERE calle = '" + calle + "' AND altura = " + altura);
 			
 			while(rs.next()) {
 				resultado.add(rs.getString("id_parq"));
