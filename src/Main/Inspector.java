@@ -1,6 +1,5 @@
 package Main;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -20,19 +19,39 @@ public class Inspector {
 	/*
 	 * Retorna un ArrayList con las calles y alturas (ubicaciones) de todos los parquimetros.
 	 */
-	public ArrayList<String> getParquimetros(){
-		//Dictionary<String, Pair<String, String>> resultado = new Dictionary<String, Pair<String, String>>();
+	public ArrayList<String> getUbicaciones(){
 		ArrayList<String> resultado = new ArrayList<String>();
 		
 		try {
 			Statement stmt = Login.getConexion().createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT calle, altura, numero FROM parquimetros");
+			ResultSet rs = stmt.executeQuery("SELECT calle, altura FROM parquimetros");
 			
 			while(rs.next()) {
 				resultado.add(rs.getString("calle") + " " + rs.getString("altura"));
 			}
 		
+		} catch (java.sql.SQLException ex) {
+			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
+			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
+			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
+		}
 		
+		return resultado;
+	}
+	
+	/*
+	 * Retorna un ArrayList con las IDs de los parquimetros que estan en la calle y altura pasada por parametro.
+	 */
+	public ArrayList<String> getParquimetros(String calle, String altura){
+		ArrayList<String> resultado = new ArrayList<String>();
+		
+		try {
+			Statement stmt = Login.getConexion().createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT id_parq FROM parquimetros WHERE calle = " + calle + ", AND altura = " + altura);
+			
+			while(rs.next()) {
+				resultado.add(rs.getString("id_parq"));
+			}
 		
 		} catch (java.sql.SQLException ex) {
 			System.out.println("Mensaje: " + ex.getMessage()); // Mensaje retornado por MySQL
@@ -84,7 +103,7 @@ public class Inspector {
 	 * Tambien notifica a la gui 
 	 * Caso contrario retorna null.
 	 */
-	public ArrayList<ArrayList<String>> conectarParquimetro(String calle, String altura) {
+	public ArrayList<ArrayList<String>> conectarParquimetro(String calle, String altura, String id_parq) {
 		
 		ArrayList<ArrayList<String>> patentesMultadas = null;
 		ArrayList<String> patentesError = null;
@@ -95,30 +114,20 @@ public class Inspector {
 		try {
 			Statement stmt = Login.getConexion().createStatement();
 			
-			String id_asociado = getAsociado(stmt, fecha, calle, altura);
+			String id_asociado = getAsociado(stmt, fecha, calle, altura); // Se obtienen la id_asociado en el caso de que exista.
 			
 			if (id_asociado != null) { // Hay un inspector asociado a la ubicacion para el dia y turno actual.
 				
-				ResultSet rs = stmt.executeQuery("SELECT patente FROM estacionados WHERE calle = '" + calle + "' AND altura = " + altura);
+				ResultSet rs = stmt.executeQuery("SELECT patente FROM estacionados WHERE calle = '" + calle + "' AND altura = " + altura); // Se obtienen las patentes estacionadas en la ubicacion que selecciono el inspector.
 				
 				String patente = null;
-				while(rs.next()){
+				while(rs.next()){ // Se eliminan las patentes de los automoviles (que estan estacionados) de la lista que registro el inspector.
 					patente = rs.getString("patente");
 					if(patentesRegistradas.contains(patente)) {
 						patentesRegistradas.remove(patente);
 					}
 				}
 				rs.close();
-				
-				ResultSet rs_id_parq = stmt.executeQuery("SELECT id_parq FROM parquimetros WHERE calle = '" + calle + "' AND altura = " + altura);
-				String id_parq = null;
-				if(rs_id_parq.next()){
-					id_parq = rs_id_parq.getString("id_parq");
-				}
-				else {
-					throw new SQLException("Ocurrió un error en la obtencion de la id del parquimetro");
-				}
-				rs_id_parq.close();
 					
 				// Genera la lista de multas que se va a retornar, y se añade al batch (para insertarlas posteriormente a la base de datos)
 				patentesMultadas = new ArrayList<ArrayList<String>>();
@@ -156,6 +165,7 @@ public class Inspector {
 							//System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 							
 							patentesError.add(p);
+//							patentesError.add(p,ex.getMessage()); HashMap con patentes y error
 						}
 						
 					}

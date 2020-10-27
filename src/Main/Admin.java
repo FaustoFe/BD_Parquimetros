@@ -5,11 +5,7 @@ import java.util.ArrayList;
 
 public class Admin {
 	
-	private GUI_Admin guiAdmin;
-	
-	public Admin(GUI_Admin guiAdmin) {
-		this.guiAdmin = guiAdmin;
-	}
+	public Admin() {}
 	
 	/*
 	 * Ejecuta una sentencia SQL pasada por parametro (DEVERÍA RETORNAR EL ResultSet CUANDO SE PUEDA)
@@ -34,7 +30,7 @@ public class Admin {
 //			System.out.println("Código: " + ex.getErrorCode()); // Código de error de MySQL 
 //			System.out.println("SQLState: " + ex.getSQLState()); // Código de error del SQL standart
 	
-			guiAdmin.mostrarMensaje("Mensaje: " + ex.getMessage());
+			GUI_Admin.mostrarMensaje("Mensaje: " + ex.getMessage());
 		}
 		return rslt;
 	}
