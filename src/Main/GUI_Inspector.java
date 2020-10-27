@@ -26,6 +26,8 @@ import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class GUI_Inspector {
 
@@ -347,18 +349,18 @@ public class GUI_Inspector {
 		
 		listaErroneas = new JList();
 		listaErroneas.setFont(new Font("Dubai", Font.PLAIN, 12));
-		listaErroneas.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
+		listaErroneas.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
 				String mensajeError = mapaErrores.get(listaErroneas.getSelectedValue().toString());
 				JOptionPane.showMessageDialog(null, mensajeError,"Mensaje", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 		scrollPaneListaErronea.setViewportView(listaErroneas);
 		
-		lblMultasErroneasPorError = new JLabel("(Por errores)");
+		lblMultasErroneasPorError = new JLabel("(Click en la patente para ver el error)");
 		lblMultasErroneasPorError.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMultasErroneasPorError.setFont(new Font("Dubai", Font.PLAIN, 12));
-		lblMultasErroneasPorError.setBounds(888, 35, 75, 27);
+		lblMultasErroneasPorError.setBounds(720, 35, 200, 27);
 		modeloListaErronea = new DefaultListModel();
 		listaErroneas.setModel(modeloListaErronea);
 		panelMulta.add(lblMultasErroneasPorError);
