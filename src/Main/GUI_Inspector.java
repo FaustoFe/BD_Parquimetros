@@ -1,6 +1,7 @@
 package Main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -21,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 public class GUI_Inspector {
 
@@ -29,13 +32,14 @@ public class GUI_Inspector {
 	private Inspector inspector;
 	private String nombreInspector;
 	private GUI_Login guiLogin;
+	private HashMap<String,String> mapaErrores;
 	
 	private JPanel panelPatentes, panelUbicacionParquimetro, panelMulta; 
 	private JScrollPane scrollPaneTablaMultas;
 	private JTextField txtPatente;
 	private JLabel lblPatente, lblListaPatente, lblSeleccionarUbicacion, lblMultasLabradas; 
 	private JButton btnAddPatente, btnEliminarPatente, btnConfirmarPatentes, btnConfirmarUbicacionParquimetro, btnVolver;
-	private JList listaPatentes;
+	private JList listaPatentes, listaErroneas;
 	private JComboBox cbUbicaciones;
 	private JTable tablaMultas;
 	
@@ -217,11 +221,13 @@ public class GUI_Inspector {
 		cbUbicaciones.setModel(bm);
 		cbUbicaciones.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String direccion = cbUbicaciones.getSelectedItem().toString();
-				lblSeleccionarParquimetros.setVisible(true);
-				cbParquimetros.setVisible(true);
-				String[] calleAltura = tratarDireccion(direccion);
-				cargarParquimetros(calleAltura[0], calleAltura[1]);			
+				if(cbUbicaciones.getSelectedItem() != null) {
+					String direccion = cbUbicaciones.getSelectedItem().toString();
+					lblSeleccionarParquimetros.setVisible(true);
+					cbParquimetros.setVisible(true);
+					String[] calleAltura = tratarDireccion(direccion);
+					cargarParquimetros(calleAltura[0], calleAltura[1]);		
+				}
 			}
 		});
 		panelUbicacionParquimetro.add(cbUbicaciones);
@@ -341,8 +347,14 @@ public class GUI_Inspector {
 		scrollPaneListaErronea.setBounds(772, 56, 130, 297);
 		panelMulta.add(scrollPaneListaErronea);
 		
-		JList listaErroneas = new JList();
+		listaErroneas = new JList();
 		listaErroneas.setFont(new Font("Dubai", Font.PLAIN, 12));
+		listaErroneas.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				String mensajeError = mapaErrores.get(listaErroneas.getSelectedValue().toString());
+				JOptionPane.showMessageDialog(null, mensajeError,"Mensaje", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		scrollPaneListaErronea.setViewportView(listaErroneas);
 		
 		lblMultasErroneasPorError = new JLabel("(Por errores)");
@@ -363,6 +375,7 @@ public class GUI_Inspector {
 	}
 	
 	private void cargarParquimetros(String calle, String altura) {
+		modeloParquimetros.removeAllElements();
 		ArrayList<String> parquimetros = inspector.getParquimetros(calle, altura);
 		
 		for(int i = 0; i < parquimetros.size(); i++) {
@@ -429,11 +442,14 @@ public class GUI_Inspector {
 	}
 	
 	
-	public void cargarListaErrores(ArrayList<String> multasErroneas) {
+	public void cargarListaErrores(HashMap<String,String> multasErroneas) {
+		int i = 0;
 		modeloListaErronea.removeAllElements();
 		
-		for(int i = 0; i < multasErroneas.size(); i++) {
-			modeloListaErronea.add(i, multasErroneas.get(i));
-		}		
+		this.mapaErrores = multasErroneas;
+
+		for(String p : multasErroneas.keySet()) {
+			modeloListaErronea.add(i++, p);
+		}	
 	}
 }
