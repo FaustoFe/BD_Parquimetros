@@ -2,6 +2,8 @@ package Main;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -33,6 +35,7 @@ public class GUI_Inspector {
 	private String nombreInspector;
 	private GUI_Login guiLogin;
 	private HashMap<String,String> mapaErrores;
+	private Set<String> patentes;
 	
 	private JPanel panelPatentes, panelUbicacionParquimetro, panelMulta; 
 	private JScrollPane scrollPaneTablaMultas;
@@ -56,6 +59,7 @@ public class GUI_Inspector {
 	public GUI_Inspector(GUI_Login guiLogin, int legajo, String nombreInspector) {
 		this.guiLogin = guiLogin;
 		this.nombreInspector = nombreInspector;
+		patentes = new HashSet<String>();
 		inspector = new Inspector(this, legajo);
 		inicializarGUI();
 		this.frame.setVisible(true);
@@ -138,16 +142,22 @@ public class GUI_Inspector {
 		btnAddPatente.setFont(new Font("Dubai", Font.PLAIN, 12));
 		btnAddPatente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//En construcción
-				if (txtPatente.getText().length() <= 6) {
-					modeloLista.add(modeloLista.size(), txtPatente.getText());
-					inspector.addPatente(txtPatente.getText());
-					txtPatente.setText("");
+				boolean pudoInsertar = false;
+				
+				if (txtPatente.getText().length() == 6) {
+					pudoInsertar = patentes.add(txtPatente.getText());
+					if(pudoInsertar) {
+						modeloLista.add(modeloLista.size(), txtPatente.getText());
+					}
+					else { //Patente duplicada;
+						JOptionPane.showMessageDialog(null, "Patente duplicada","Error", JOptionPane.ERROR_MESSAGE);	
+					}
 				}
-				else {
+				else { //Patente invalida;
 					JOptionPane.showMessageDialog(null, "Patente incorrecta","Error", JOptionPane.ERROR_MESSAGE);
-					txtPatente.setText("");
 				}
+				
+				txtPatente.setText("");
 			}
 		});
 		panelPatentes.add(btnAddPatente);
@@ -177,7 +187,7 @@ public class GUI_Inspector {
 			public void actionPerformed(ActionEvent e) {
 				if(listaPatentes.getSelectedValue() != null) {
 		           String patente = listaPatentes.getSelectedValue().toString();
-		           inspector.removePatente(patente);
+		           patentes.remove(patente);
 		           modeloLista.removeElement(patente);
 				}				
 			}
@@ -242,28 +252,16 @@ public class GUI_Inspector {
 				int opcion = JOptionPane.showConfirmDialog(null, "¿Confirma la calle y ubicación?", "Confirmación", JOptionPane.YES_NO_OPTION);
 								
 				if (opcion == JOptionPane.OK_OPTION) {
-					String direccion = cbUbicaciones.getSelectedItem().toString();
-		        	
-					// Separar el string de la ubicacion en calle y altura
-					String[]separado = direccion.split(" ");
-	                String calle = "";
-
-	                for(int i=0;i < separado.length-1; i++) {
-	                    calle+= separado[i];
-	                    if(i != separado.length-2) {
-	                    	calle+=" ";
-	                    }
-	                }
-	 
-	                String altura = separado[separado.length-1];
+					String[] calleAltura = tratarDireccion(cbUbicaciones.getSelectedItem().toString());
 	                String id_parquimetro = cbParquimetros.getSelectedItem().toString();
-		        	ArrayList<ArrayList<String>> datos = inspector.conectarParquimetro(calle, altura, id_parquimetro);
+	                
+		        	ArrayList<ArrayList<String>> datos = inspector.conectarParquimetro(calleAltura[0], calleAltura[1], id_parquimetro, patentes);
 		        	
 		        	if (datos == null) {
 		        		JOptionPane.showMessageDialog(null, "Ubicación no asignada", "Error", JOptionPane.CANCEL_OPTION);
 		        	}
 		        	else {
-		        		inspector.limpiarListaPatentes();
+		        		patentes = new HashSet<String>();
 		        		cargarTablaMulta(datos);
 		        		panelUbicacionParquimetro.setVisible(false);
 		        		panelMulta.setVisible(true);
