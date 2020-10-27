@@ -41,10 +41,12 @@ public class GUI_Inspector {
 	
 	private DefaultTableModel modeloTabla;
 	private DefaultListModel modeloLista,modeloListaErronea;
-	private DefaultComboBoxModel bm;
+	private DefaultComboBoxModel bm, modeloParquimetros;
 	private JButton btnVolverMenu;
 	private JLabel lblMultasErroneasPorError;
 	private JScrollPane scrollPaneListaPatentes;
+	private JComboBox cbParquimetros;
+	private JLabel lblSeleccionarParquimetros;
 
 
 	public GUI_Inspector(GUI_Login guiLogin, int legajo, String nombreInspector) {
@@ -202,25 +204,37 @@ public class GUI_Inspector {
 		//Componentes del panelUbicacionParquimetro	
 		
 		lblSeleccionarUbicacion = new JLabel("Seleccionar ubicacion");
-		lblSeleccionarUbicacion.setBounds(82, 11, 122, 14);
+		lblSeleccionarUbicacion.setBounds(82, 10, 122, 14);
 		lblSeleccionarUbicacion.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSeleccionarUbicacion.setFont(new Font("Dubai", Font.PLAIN, 12));
 		panelUbicacionParquimetro.add(lblSeleccionarUbicacion);
 		
 		cbUbicaciones = new JComboBox();
-		cbUbicaciones.setBounds(25, 31, 229, 21);
+		cbUbicaciones.setBounds(25, 30, 230, 20);
 		cbUbicaciones.setToolTipText("Ubicaciones");
 		cbUbicaciones.setFont(new Font("Dubai", Font.PLAIN, 12));
 		bm = new DefaultComboBoxModel();
 		cbUbicaciones.setModel(bm);
+		cbUbicaciones.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String direccion = cbUbicaciones.getSelectedItem().toString();
+				lblSeleccionarParquimetros.setVisible(true);
+				cbParquimetros.setVisible(true);
+				String[] calleAltura = tratarDireccion(direccion);
+				cargarParquimetros(calleAltura[0], calleAltura[1]);			
+			}
+		});
 		panelUbicacionParquimetro.add(cbUbicaciones);
 		
 		btnConfirmarUbicacionParquimetro = new JButton("Confirmar");
+		btnConfirmarUbicacionParquimetro.setFont(new Font("Dubai", Font.PLAIN, 12));
+		btnConfirmarUbicacionParquimetro.setBounds(160, 319, 89, 23);
+		btnConfirmarUbicacionParquimetro.setEnabled(false);
 		btnConfirmarUbicacionParquimetro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				int opcion = JOptionPane.showConfirmDialog(null, "¿Confirma la calle y ubicación?", "Confirmación", JOptionPane.YES_NO_OPTION);
-				
+								
 				if (opcion == JOptionPane.OK_OPTION) {
 					String direccion = cbUbicaciones.getSelectedItem().toString();
 		        	
@@ -236,8 +250,8 @@ public class GUI_Inspector {
 	                }
 	 
 	                String altura = separado[separado.length-1];
-	                
-		        	ArrayList<ArrayList<String>> datos = inspector.conectarParquimetro(calle, altura);
+	                String id_parquimetro = cbParquimetros.getSelectedItem().toString();
+		        	ArrayList<ArrayList<String>> datos = inspector.conectarParquimetro(calle, altura, id_parquimetro);
 		        	
 		        	if (datos == null) {
 		        		JOptionPane.showMessageDialog(null, "Ubicación no asignada", "Error", JOptionPane.CANCEL_OPTION);
@@ -252,20 +266,46 @@ public class GUI_Inspector {
 		        }
 			}
 		});
-		btnConfirmarUbicacionParquimetro.setFont(new Font("Dubai", Font.PLAIN, 12));
-		btnConfirmarUbicacionParquimetro.setBounds(160, 319, 89, 23);
 		panelUbicacionParquimetro.add(btnConfirmarUbicacionParquimetro);
-			btnVolver = new JButton("Volver");
-			btnVolver.setFont(new Font("Dubai", Font.PLAIN, 12));
-			btnVolver.setBounds(30, 319, 89, 23);
-			btnVolver.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					panelUbicacionParquimetro.setVisible(false);
-					panelPatentes.setVisible(true);
-					bm.removeAllElements();
-				}
-			});
+		
+		
+		btnVolver = new JButton("Volver");
+		btnVolver.setFont(new Font("Dubai", Font.PLAIN, 12));
+		btnVolver.setBounds(30, 319, 89, 23);
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelUbicacionParquimetro.setVisible(false);				
+				bm.removeAllElements();
+				cbParquimetros.setVisible(false);
+				modeloParquimetros.removeAllElements();
+				lblSeleccionarParquimetros.setVisible(false);
+				btnConfirmarUbicacionParquimetro.setEnabled(false);
+				
+				panelPatentes.setVisible(true);	
+			}
+		});
 		panelUbicacionParquimetro.add(btnVolver);
+		
+		cbParquimetros = new JComboBox();
+		cbParquimetros.setToolTipText("Ubicaciones");
+		cbParquimetros.setFont(new Font("Dubai", Font.PLAIN, 12));
+		cbParquimetros.setBounds(25, 140, 230, 20);
+		cbParquimetros.setVisible(false);
+		modeloParquimetros = new DefaultComboBoxModel();
+		cbParquimetros.setModel(modeloParquimetros);
+		cbParquimetros.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnConfirmarUbicacionParquimetro.setEnabled(true);
+			}
+		});
+		panelUbicacionParquimetro.add(cbParquimetros);
+		
+		lblSeleccionarParquimetros = new JLabel("Seleccionar parquimetro");
+		lblSeleccionarParquimetros.setHorizontalAlignment(SwingConstants.CENTER);
+		lblSeleccionarParquimetros.setFont(new Font("Dubai", Font.PLAIN, 12));
+		lblSeleccionarParquimetros.setBounds(72, 116, 140, 14);
+		lblSeleccionarParquimetros.setVisible(false);
+		panelUbicacionParquimetro.add(lblSeleccionarParquimetros);
 		
 
 		
@@ -315,12 +355,21 @@ public class GUI_Inspector {
 	}
 	
 	private void cargarUbicaciones() {
-		ArrayList<String> ubicaciones = inspector.getParquimetros();
+		ArrayList<String> ubicaciones = inspector.getUbicaciones();
 		
 		for(int i = 0; i < ubicaciones.size(); i++) {
 			bm.addElement(ubicaciones.get(i));
 		}
 	}
+	
+	private void cargarParquimetros(String calle, String altura) {
+		ArrayList<String> parquimetros = inspector.getParquimetros(calle, altura);
+		
+		for(int i = 0; i < parquimetros.size(); i++) {
+			modeloParquimetros.addElement(parquimetros.get(i));
+		}
+	}
+	
 	
 	private void cargarTablaMulta(ArrayList<ArrayList<String>> datos) {
 		
@@ -354,6 +403,31 @@ public class GUI_Inspector {
 	    
 	    //resizeColumnWidth(TablaDatos);
 	}
+	
+	private String[] tratarDireccion(String direccion) {
+    	
+		String toReturn[] = new String[2];
+		
+		// Separar el string de la ubicacion en calle y altura
+		String[]separado = direccion.split(" ");
+        String calle = "";
+
+        for(int i=0;i < separado.length-1; i++) {
+            calle+= separado[i];
+            if(i != separado.length-2) {
+            	calle+=" ";
+            }
+        }
+
+        String altura = separado[separado.length-1];
+        
+        
+        toReturn[0] = calle;
+        toReturn[1] = altura;
+        
+        return toReturn;
+	}
+	
 	
 	public void cargarListaErrores(ArrayList<String> multasErroneas) {
 		modeloListaErronea.removeAllElements();

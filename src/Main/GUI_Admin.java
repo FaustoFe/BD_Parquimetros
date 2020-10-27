@@ -66,7 +66,7 @@ public class GUI_Admin {
 	
 	public GUI_Admin(GUI_Login guiLogin) {
 		this.guiLogin = guiLogin;
-		admin = new Admin(this);
+		admin = new Admin();
 		inicializarGUI();
 		actualizarListaTablas();
 		this.frame.setVisible(true);
