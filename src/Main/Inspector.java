@@ -3,17 +3,16 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public class Inspector {
 
 	private GUI_Inspector guiInspector;
 	private int legajo;
-	private ArrayList<String> patentesRegistradas;
 	
 	public Inspector(GUI_Inspector guiInspector, int legajo) {
 		this.guiInspector = guiInspector;
 		this.legajo = legajo;
-		patentesRegistradas = new ArrayList<String>();
 	}
 
 	
@@ -104,7 +103,7 @@ public class Inspector {
 	 * Tambien notifica a la gui 
 	 * Caso contrario retorna null.
 	 */
-	public ArrayList<ArrayList<String>> conectarParquimetro(String calle, String altura, String id_parq) {
+	public ArrayList<ArrayList<String>> conectarParquimetro(String calle, String altura, String id_parq, Set<String> patentes) {
 		
 		ArrayList<ArrayList<String>> patentesMultadas = null;
 		HashMap<String, String> patentesError = null;
@@ -124,8 +123,8 @@ public class Inspector {
 				String patente = null;
 				while(rs.next()){ // Se eliminan las patentes de los automoviles (que estan estacionados) de la lista que registro el inspector.
 					patente = rs.getString("patente");
-					if(patentesRegistradas.contains(patente)) {
-						patentesRegistradas.remove(patente);
+					if(patentes.contains(patente)) {
+						patentes.remove(patente);
 					}
 				}
 				rs.close();
@@ -134,7 +133,7 @@ public class Inspector {
 				patentesMultadas = new ArrayList<ArrayList<String>>();
 				patentesError = new HashMap<String, String>();
 				
-				if(!patentesRegistradas.isEmpty()) {
+				if(!patentes.isEmpty()) {
 					
 					// Obtener siguiente id (numero de la multa)
 					ResultSet rs_id = stmt.executeQuery("SELECT numero FROM multa ORDER BY numero DESC LIMIT 1");
@@ -142,7 +141,7 @@ public class Inspector {
 					int numeroMulta = Integer.parseInt(rs_id.getString("numero")) + 1;
 					rs_id.close();
 					
-					for(String p : patentesRegistradas) {
+					for(String p : patentes) {
 						ArrayList<String> pMultada = new ArrayList<String>();
 						
 						try {
@@ -190,19 +189,6 @@ public class Inspector {
 		}
 				
 		return patentesMultadas;
-	}
-	
-	
-	public void addPatente(String patente) {
-		patentesRegistradas.add(patente);
-	}
-	
-	public boolean removePatente(String patente) {
-		return patentesRegistradas.remove(patente);
-	}
-	
-	public void limpiarListaPatentes() {
-		patentesRegistradas = new ArrayList<String>();
 	}
 	
 }
