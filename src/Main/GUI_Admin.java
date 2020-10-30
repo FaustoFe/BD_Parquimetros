@@ -49,31 +49,27 @@ public class GUI_Admin {
 	private Admin admin;
 	private GUI_Login guiLogin;
 	
+	//Componentes graficos
 	private JTextField txtSelectFrom;
 	private JLabel lblAtributos, lblTablas; 
 	private JList ListaTablas, ListaAtributos;
-	private JButton btnEjecutar;
-	
-	private DefaultListModel modeloLT,modeloLA;
-	private DefaultTableModel modeloTabla;
-		
+	private JButton btnEjecutar, btnVolver;
 	private JTable TablaDatos;
 	private JScrollPane scrollPane;
 	
-	private JButton btnVolver;
-	
-	
+	//Modelos para la tabla, y listas
+	private DefaultListModel modeloLT,modeloLA;
+	private DefaultTableModel modeloTabla;
+
 	
 	public GUI_Admin(GUI_Login guiLogin) {
 		this.guiLogin = guiLogin;
-		admin = new Admin();
+		admin = new Admin(); //Crea al administrador
 		inicializarGUI();
 		actualizarListaTablas();
 		this.frame.setVisible(true);
 	}
 	
-
-
 	private void inicializarGUI() {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(new Color(51, 204, 255));
@@ -172,6 +168,10 @@ public class GUI_Admin {
 	}	
 	
 	
+	/*
+	 * Envia la sentencia al administrador, y me retorna el ResultSet
+	 * Para actualizar la tabla con los resultados!
+	 */
 	private void ejecutarSentencia(String sql) {
 		ResultSet rs = admin.sentenciaSQL(sql);
 		if (rs != null) {
@@ -190,21 +190,23 @@ public class GUI_Admin {
 		}
 	}
 	
-	
+	/*
+	 * Se actualiza la tabla con los datos del ResultSet
+	 */
 	private void actualizarTabla(ResultSet rs) throws SQLException{
 		
 		DefaultTableModel dtm = (DefaultTableModel) TablaDatos.getModel();
 				
 	    ResultSetMetaData metaData = rs.getMetaData();
 
-	    // names of columns
+	    // Nombres de las columnas
 	    Vector<String> columnNames = new Vector<String>();
 	    int columnCount = metaData.getColumnCount();
 	    for (int column = 1; column <= columnCount; column++) {
 	        columnNames.add(metaData.getColumnName(column));
 	    }
 
-	    // data of the table
+	    // Datos de la tabla
 	    Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 	    while (rs.next()) {
 	        Vector<Object> vector = new Vector<Object>();
@@ -214,14 +216,13 @@ public class GUI_Admin {
 	        data.add(vector);
 	    }
 
-	    dtm.setDataVector(data, columnNames);
-	    
-	    //resizeColumnWidth(TablaDatos);
-	    
+	    dtm.setDataVector(data, columnNames);	    
 	 }
 	
 	
-	
+	/*
+	 * Actualiza la tabla donde se muestran los nombres de las tablas de la bd
+	 */
 	private void actualizarListaTablas() {
 		modeloLT.removeAllElements();
 		
@@ -232,6 +233,9 @@ public class GUI_Admin {
 		}
 	}
 	
+	/*
+	 * Actualiza la tabla donde se muestran los atributos
+	 */
 	private void actualizarListaAtributos(String tabla) {
 		modeloLA.removeAllElements();
 		
@@ -242,67 +246,15 @@ public class GUI_Admin {
 		}
 	}
 	
-	
-	public void resizeColumnWidth(JTable table) {
-	    final TableColumnModel columnModel = table.getColumnModel();
-	    for (int column = 0; column < table.getColumnCount(); column++) {
-	        int width = 30; // Min width
-	        for (int row = 0; row < table.getRowCount(); row++) {
-	            TableCellRenderer renderer = table.getCellRenderer(row, column);
-	            Component comp = table.prepareRenderer(renderer, row, column);
-	            width = Math.max(comp.getPreferredSize().width + 1 , width);
-	        }
-	        if(width > 200)
-	            width = 200;
-	        columnModel.getColumn(column).setPreferredWidth(width);
-	    }
-	}
-	
-	
-	
+	/*
+	 * Estatico para que de cualquier clase puedan mostrar el mensaje por parametro.
+	 */
 	public static void mostrarMensaje(String s) {
 		JOptionPane.showMessageDialog(null, s,"Mensaje", JOptionPane.INFORMATION_MESSAGE);
 	}
-	
 	
 	
 }
 
 
 
-
-/*
-		tabla = new DBTable();		
-		//tabla.getTable().setFont(new Font("Dubai", Font.PLAIN, 12));
-		tabla.setBounds(70, 400, 284, -244);
-		//tabla.getTable().setBounds(1, -1, 399, 0);
-		tabla.setEditable(false);
-		tabla.setVisible(true);
-		frame.getContentPane().add(tabla, BorderLayout.CENTER); 
-		//tabla.setLayout(null);
-		
-	Statement stmt;
-	try {
-		stmt = conexion.createStatement();
-		String sql = "SELECT legajo FROM accede";
-		ResultSet rs = stmt.executeQuery(sql);
-		tabla.refresh(rs);
-	} catch (SQLException e1) {	e1.printStackTrace();}
-	
-	
-	
-	------------------------------------------------
-	
-	         
-	//actualiza el contenido de la tabla con los datos del resulset rs
-	 //tabla.refresh(rs);
-	
-	ResultSet rs = admin.sentenciaSQL(txtSelectFrom.getText());
-	if (rs != null) {
-		try {
-			tabla.refresh(rs);
-			rs.close();
-		} catch (SQLException d) { d.printStackTrace(); }
-	}
-
-*/

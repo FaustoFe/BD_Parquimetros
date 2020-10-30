@@ -69,10 +69,6 @@ public class Fecha {
 	    
 	    // Set del dateSQL
 	    timeSQL = java.sql.Time.valueOf((new SimpleDateFormat("HH:mm:ss")).format(dNow));
-	    
-	    //SACAR
-	    dia = "Mi";
-	    turno = "T";
 	}
 
 

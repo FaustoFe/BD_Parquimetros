@@ -19,6 +19,7 @@ public class GUI_Login {
 
 	private JFrame frame;
 	
+	//Componentes graficos
 	private JLabel lblLegajo, lblPassword, lblTitulo, lblAdmin;
 	private JButton btnConectarInspector, btnConectarAdmin, btnSalir;
 	private JTextField txtLegajo;
@@ -109,6 +110,7 @@ public class GUI_Login {
 					JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);
 				}
 				
+				//Limpio los campos
 				txtContraseña.setText("");
 				txtLegajo.setText("");
 				
@@ -160,17 +162,25 @@ public class GUI_Login {
 	}
 	
 	
+	/*
+	 * Inicializamos el Inspector
+	 */
 	private void inicializarInspector(int legajo, String nombreInspector) {
 		GUI_Inspector gi = new GUI_Inspector(this, legajo, nombreInspector);
 		frame.setVisible(false);
 	}
 	
+	/*
+	 * Inicializamos el Administrador
+	 */
 	private void inicializarAdmin() {
 		GUI_Admin ga = new GUI_Admin(this);
 		frame.setVisible(false);
 	}
 	
-	
+	/*
+	 * Metodo para obtener el frame de la GUI_Login
+	 */
 	public JFrame getFrame() {
 		return this.frame;
 	}

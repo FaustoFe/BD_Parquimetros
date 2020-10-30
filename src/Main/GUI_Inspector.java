@@ -36,26 +36,23 @@ public class GUI_Inspector {
 	private Inspector inspector;
 	private String nombreInspector;
 	private GUI_Login guiLogin;
-	private HashMap<String,String> mapaErrores;
-	private Set<String> patentes;
+	private HashMap<String,String> mapaErrores; //Key: patente, Value: msg con el error
+	private Set<String> patentes; //Conjunto de patentes que fue agregando el inspector
 	
+	//Componentes graficos
 	private JPanel panelPatentes, panelUbicacionParquimetro, panelMulta; 
-	private JScrollPane scrollPaneTablaMultas;
+	private JScrollPane scrollPaneTablaMultas, scrollPaneListaPatentes, scrollPaneListaErronea;
 	private JTextField txtPatente;
-	private JLabel lblPatente, lblListaPatente, lblSeleccionarUbicacion, lblMultasLabradas; 
-	private JButton btnAddPatente, btnEliminarPatente, btnConfirmarPatentes, btnConfirmarUbicacionParquimetro, btnVolver;
+	private JLabel lblPatente, lblListaPatente, lblSeleccionarUbicacion, lblMultasLabradas, lblMultasErroneasPorError, lblSeleccionarParquimetros, lblMultasErroneas; 
+	private JButton btnAddPatente, btnEliminarPatente, btnConfirmarPatentes, btnConfirmarUbicacionParquimetro, btnVolver, btnVolverMenu;
 	private JList listaPatentes, listaErroneas;
-	private JComboBox cbUbicaciones;
+	private JComboBox cbParquimetros, cbUbicaciones;
 	private JTable tablaMultas;
 	
+	//Modelos para la tabla, lista y los combobox
 	private DefaultTableModel modeloTabla;
 	private DefaultListModel modeloLista,modeloListaErronea;
 	private DefaultComboBoxModel bm, modeloParquimetros;
-	private JButton btnVolverMenu;
-	private JLabel lblMultasErroneasPorError;
-	private JScrollPane scrollPaneListaPatentes;
-	private JComboBox cbParquimetros;
-	private JLabel lblSeleccionarParquimetros;
 
 
 	public GUI_Inspector(GUI_Login guiLogin, int legajo, String nombreInspector) {
@@ -97,8 +94,8 @@ public class GUI_Inspector {
 		frame.getContentPane().add(btnVolverMenu);
 		
 		
-	
-	
+		
+		//Creacion de los 3 paneles
 		
 		panelPatentes = new JPanel();
 		panelPatentes.setBounds(0, 0, 275, 350);
@@ -106,7 +103,6 @@ public class GUI_Inspector {
 		panelPatentes.setLayout(null);
 		panelPatentes.setVisible(true);
 		frame.getContentPane().add(panelPatentes);
-		
 		
 		panelUbicacionParquimetro = new JPanel();
 		panelUbicacionParquimetro.setBounds(0, 0, 275, 350);
@@ -129,14 +125,14 @@ public class GUI_Inspector {
 		
 		lblPatente = new JLabel("Patente");
 		lblPatente.setBounds(50, 11, 46, 14);
-		panelPatentes.add(lblPatente);
 		lblPatente.setFont(new Font("Dubai", Font.PLAIN, 12));
+		panelPatentes.add(lblPatente);
 		
 		txtPatente = new JTextField();
 		txtPatente.setBounds(20, 25, 103, 20);
-		panelPatentes.add(txtPatente);
 		txtPatente.setFont(new Font("Dubai", Font.PLAIN, 12));
 		txtPatente.setColumns(10);
+		panelPatentes.add(txtPatente);
 		
 		btnAddPatente = new JButton("Agregar patente");
 		btnAddPatente.setBounds(134, 25, 122, 20);
@@ -211,10 +207,6 @@ public class GUI_Inspector {
 		listaPatentes.setModel(modeloLista);
 		
 		
-		
-		
-		
-
 		
 		
 		//Componentes del panelUbicacionParquimetro	
@@ -319,7 +311,6 @@ public class GUI_Inspector {
 
 		//Componentes del panelMulta
 		
-		
 		lblMultasLabradas = new JLabel("Multas labradas");
 		lblMultasLabradas.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMultasLabradas.setBounds(193, 15, 265, 35);
@@ -337,13 +328,13 @@ public class GUI_Inspector {
 		tablaMultas.setModel(modeloTabla);
 		scrollPaneTablaMultas.setViewportView(tablaMultas);
 		
-		JLabel lblMultasErroneas = new JLabel("Multas no creadas");
+		lblMultasErroneas = new JLabel("Multas no creadas");
 		lblMultasErroneas.setBounds(712, 15, 265, 35);
 		panelMulta.add(lblMultasErroneas);
 		lblMultasErroneas.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMultasErroneas.setFont(new Font("Dubai", Font.PLAIN, 30));
 		
-		JScrollPane scrollPaneListaErronea = new JScrollPane();
+		scrollPaneListaErronea = new JScrollPane();
 		scrollPaneListaErronea.setBounds(772, 56, 130, 297);
 		panelMulta.add(scrollPaneListaErronea);
 		
@@ -366,6 +357,9 @@ public class GUI_Inspector {
 		panelMulta.add(lblMultasErroneasPorError);
 	}
 	
+	/*
+	 * Carga las ubicaciones en el comboBoxUbicaciones
+	 */	
 	private void cargarUbicaciones() {
 		ArrayList<String> ubicaciones = inspector.getUbicaciones();
 		
@@ -374,6 +368,10 @@ public class GUI_Inspector {
 		}
 	}
 	
+	/*
+	 * Carga los parquimetros al comboBoxParquimetros
+	 * Dependiendo de la calle y altura pasadas por parametros.
+	 */
 	private void cargarParquimetros(String calle, String altura) {
 		modeloParquimetros.removeAllElements();
 		ArrayList<String> parquimetros = inspector.getParquimetros(calle, altura);
@@ -383,14 +381,16 @@ public class GUI_Inspector {
 		}
 	}
 	
-	
+	/*
+	 * Carga la tabla multa
+	 */
 	private void cargarTablaMulta(ArrayList<ArrayList<String>> datos) {
 		
 		//Reseteo la tabla
 		modeloTabla.setRowCount(0);
 		modeloTabla.fireTableDataChanged();
 		
-	    // names of columns
+	    // Nombres de la columna
 	    Vector<String> columnNames = new Vector<String>();
 	    int columnCount = 7; //Por las cantidad de columnas
 	    columnNames.add("Nro multa");
@@ -402,7 +402,7 @@ public class GUI_Inspector {
 	    columnNames.add("Legajo inspector");
 
 	    
-	    // data of the table
+	    // Datos de la tabla
 	    Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 	    for(ArrayList<String> al : datos) {
 	    	Vector<Object> vector = new Vector<Object>();
@@ -413,10 +413,13 @@ public class GUI_Inspector {
 	    }
 
 	    modeloTabla.setDataVector(data, columnNames);
-	    
-	    //resizeColumnWidth(TablaDatos);
 	}
 	
+	/*
+	 * Separo la direccion, devolviendo un arreglo de 2 componentes
+	 * la primera componente: la direccion
+	 * la segunda componente: es la altura
+	 */
 	private String[] tratarDireccion(String direccion) {
     	
 		String toReturn[] = new String[2];
@@ -441,7 +444,9 @@ public class GUI_Inspector {
         return toReturn;
 	}
 	
-	
+	/*
+	 * Cargo la lista de las patentes con errores
+	 */
 	public void cargarListaErrores(HashMap<String,String> multasErroneas) {
 		int i = 0;
 		modeloListaErronea.removeAllElements();
