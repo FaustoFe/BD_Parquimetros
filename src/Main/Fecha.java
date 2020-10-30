@@ -2,6 +2,7 @@ package Main;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Fecha {
 	
@@ -23,31 +24,40 @@ public class Fecha {
 		Date dNow = new Date();
 		
 		// Set de las iniciales del dia
-	    switch(new SimpleDateFormat("E").format(dNow)) {
+	    switch(new SimpleDateFormat("EEEEEE", Locale.US).format(dNow)) {
 	    	case("Monday"):{
 	    		this.dia = "Lu";
+	    		break;
 	    	}
 	    	case("Tuesday"):{
 	    		this.dia = "Ma";
+	    		break;
 	    	}
 	    	case("Wednesday"):{
 	    		this.dia = "Mi";
+	    		break;
 	    	}
 	    	case("Thursday"):{
 	    		this.dia = "Ju";
+	    		break;
 	    	}
 	    	case("Friday"):{
 	    		this.dia = "Vi";
+	    		break;
 	    	}
 	    	case("Saturday"):{
 	    		this.dia = "Sa";
+	    		break;
 	    	}
 	    	case("Sunday"):{
 	    		this.dia = "Do";
+	    		break;
 	    	}
-	    	default: {}
 	    }
 		
+	    if(dia == null) {
+	    	System.out.println("Error en el día producto de Local.<Pais>");
+	    }
 	    
 	    // Set del turno
 	    int hora = Integer.parseInt(new SimpleDateFormat("H").format(dNow));
@@ -69,6 +79,7 @@ public class Fecha {
 	    
 	    // Set del dateSQL
 	    timeSQL = java.sql.Time.valueOf((new SimpleDateFormat("HH:mm:ss")).format(dNow));
+	    
 	}
 
 

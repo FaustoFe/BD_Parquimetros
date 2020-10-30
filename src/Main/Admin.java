@@ -8,7 +8,8 @@ public class Admin {
 	public Admin() {}
 	
 	/*
-	 * Ejecuta una sentencia SQL pasada por parametro (DEVERÍA RETORNAR EL ResultSet CUANDO SE PUEDA)
+	 * Ejecuta una sentencia SQL pasada por parametro retornando el ResultSet aasociado en el caso que se pueda.
+	 * Caso contrario retorna null.
 	 */
 	public ResultSet sentenciaSQL(String consulta){
 		

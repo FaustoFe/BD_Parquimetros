@@ -98,10 +98,10 @@ public class Inspector {
 	/*
 	 * Simula la coneccion del inspector al parquimetro, chequeando si esta en condiciones de labrar multas en la ubicacion
 	 * pasada por parametro para el dia y turno actual.
-	 * En el caso que pueda, se realizaran multas a los vehiculos estacionados cuyas patentes no esten en la base de datos,
+	 * En el caso que pueda, se realizaran multas a los vehiculos que no estan en la tabla estacionados de la base de datos,
 	 * y se registra el acceso del inspector al parquimetro.
-	 * Tambien notifica a la gui 
 	 * Caso contrario retorna null.
+	 * Tambien envía a la GUI un listado de las patentes que produjeron un error al ingresarles una multa en la base de datos.
 	 */
 	public ArrayList<ArrayList<String>> conectarParquimetro(String calle, String altura, String id_parq, Set<String> patentes) {
 		

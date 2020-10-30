@@ -10,14 +10,14 @@ public abstract class Login {
 	private static Connection cnx = null;
 
 	/*
-	 * Retorna una conexion si la clave es correcta (solo se utiliza para admin).
+	 * Establece una conección de tipo de usuario admin.
 	 */
 	public static void conectarBD(String clave) {
 		establecerConexion("admin", clave);
 	}
 	
 	/*
-	 * Retorna una conexion si los datos corresponden a un inspector.
+	 * Establece una conección de tipo de usuario inspector retornando el nombre y apellido del inspector que ingresa.
 	 */
 	public static String conectarBD(String usuario, String clave) {
 		establecerConexion("inspector", "inspector");
@@ -49,7 +49,7 @@ public abstract class Login {
 	
 	
 	/*
-	 * Retorna una conexion si los datos son correctos.
+	 * Retorna una conexion si los datos pasados por parámetro son correctos.
 	 */
 	private static Connection establecerConexion(String usuario, String clave) {
 		
@@ -73,6 +73,9 @@ public abstract class Login {
 		
 	}
 	
+	/*
+	 * Cierra la conección con la base de datos.
+	 */
 	public static void desconectarBD() {
 	      if (cnx != null) {
 	         try {
@@ -87,6 +90,9 @@ public abstract class Login {
 	      }
 	}
 	
+	/*
+	 * Retorna la conección establecida con la base de datros, de no haberla retorna null.
+	 */
 	public static Connection getConexion() {
 		return cnx;
 	}
