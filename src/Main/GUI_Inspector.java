@@ -140,7 +140,7 @@ public class GUI_Inspector {
 			public void actionPerformed(ActionEvent e) {
 				boolean pudoInsertar = false;
 				
-				if (txtPatente.getText().length() == 6) {
+				if (verificarPatente(txtPatente.getText())) { // controlar longitud 6 y que el formato sea LLLNNN (L = letra mayuscula y N = digito)
 					pudoInsertar = patentes.add(txtPatente.getText());
 					if(pudoInsertar) {
 						modeloLista.add(modeloLista.size(), txtPatente.getText());
@@ -150,7 +150,7 @@ public class GUI_Inspector {
 					}
 				}
 				else { //Patente invalida;
-					JOptionPane.showMessageDialog(null, "Patente incorrecta","Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Formato de patente incorrecta","Error", JOptionPane.ERROR_MESSAGE);
 				}
 				
 				txtPatente.setText("");
@@ -455,4 +455,18 @@ public class GUI_Inspector {
 			modeloListaErronea.add(i++, p);
 		}	
 	}
+	
+	public boolean verificarPatente(String patente) {
+		 boolean resultado = 	(patente.length() == 6) && 
+				 				Character.isUpperCase(patente.charAt(0)) && 
+				 				Character.isUpperCase(patente.charAt(1)) && 
+				 				Character.isUpperCase(patente.charAt(2)) &&
+				 				Character.isDigit(patente.charAt(3)) && 
+				 				Character.isDigit(patente.charAt(4)) && 
+				 				Character.isDigit(patente.charAt(5));
+		 
+		 return resultado;
+	}
+	
+	
 }
