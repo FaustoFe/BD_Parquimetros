@@ -17,8 +17,8 @@ public class GUI_Login {
 	private JFrame frame;
 	
 	//Componentes graficos
-	private JLabel lblLegajo, lblPassword, lblTitulo, lblAdmin;
-	private JButton btnConectarInspector, btnConectarAdmin, btnSalir;
+	private JLabel lblLegajo, lblPassword, lblTitulo, lblAdmin, lblParquimetro;
+	private JButton btnConectarInspector, btnConectarAdmin, btnConectarParquimetro, btnSalir;
 	private JTextField txtLegajo;
 	private JPasswordField txtContraseña;
 	
@@ -62,9 +62,22 @@ public class GUI_Login {
 		
 		lblAdmin = new JLabel("Conectar como admin");
 		lblAdmin.setFont(new Font("Dubai", Font.PLAIN, 12));
-		lblAdmin.setBounds(447, 216, 159, 20);
+		lblAdmin.setBounds(440, 216, 159, 20);
 		frame.getContentPane().add(lblAdmin);		
+
+/*
+	=====================================================================================================================================
+*/
+
+		lblParquimetro = new JLabel("Conectar como parquimetro");
+		lblParquimetro.setFont(new Font("Dubai", Font.PLAIN, 12));
+		lblParquimetro.setBounds(215, 216, 159, 20);
+		frame.getContentPane().add(lblParquimetro);	
 		
+/*
+	=====================================================================================================================================
+*/
+
 		lblLegajo = new JLabel("Legajo");
 		lblLegajo.setFont(new Font("Dubai", Font.PLAIN, 15));
 		lblLegajo.setBounds(113, 128, 83, 35);
@@ -144,6 +157,32 @@ public class GUI_Login {
 		btnConectarAdmin.setFont(new Font("Dubai", Font.BOLD, 12));
 		btnConectarAdmin.setBounds(458, 237, 89, 51);
 		frame.getContentPane().add(btnConectarAdmin);
+/*
+	=====================================================================================================================================
+*/
+		
+		btnConectarParquimetro = new JButton("Conectar");
+		btnConectarParquimetro.setToolTipText("Conectarse como parquimetro");
+		btnConectarParquimetro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Login.conectarBD(password);
+				
+				if(Login.getConexion() != null) { //Exito al entrar
+					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.PLAIN_MESSAGE);
+					//inicializarParquimetro();
+				}
+				else { //Intentar de nuevo
+					JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);	
+				}
+			}
+		});
+		btnConectarParquimetro.setFont(new Font("Dubai", Font.BOLD, 12));
+		btnConectarParquimetro.setBounds(249, 237, 89, 51);
+		frame.getContentPane().add(btnConectarParquimetro);
+		
+/*
+	=====================================================================================================================================
+*/		
 		
 		btnSalir = new JButton("Salir");
 		btnSalir.addActionListener(new ActionListener() {
