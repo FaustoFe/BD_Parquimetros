@@ -183,6 +183,24 @@ CREATE TABLE multa (
 
 
 
+
+#-------------------------------------------------------------------------
+# Creación de la tabla ventas (Punto 3 - 4)
+#-------------------------------------------------------------------------
+
+CREATE TABLE ventas (
+	id_tarjeta INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	tipo_tarjeta INT UNSIGNED NOT NULL,
+	saldo DECIMAL(5,2) NOT NULL,
+	fecha DATE NOT NULL,
+	hora TIME NOT NULL,
+
+	CONSTRAINT pk_id_tarjeta PRIMARY KEY (id_tarjeta)
+
+) ENGINE=INNODB;
+
+
+
 #-------------------------------------------------------------------------
 # Creación de la vista
 #-------------------------------------------------------------------------
@@ -259,3 +277,134 @@ GRANT INSERT ON parquimetros.accede TO 'inspector'@'%';
 	insertar de la tabla accede
 */
 # ------------------------------------------------------------------------------------
+
+
+
+
+
+# --------------------------- Usuario: parquimetro -------------------------------------
+CREATE USER 'parquimetro'@'%' IDENTIFIED BY 'parq';
+
+# Usuario 'parquimetro' con password 'parq'
+
+GRANT EXECUTE ON parquimetros.conectar TO 'parquimetro'@'%';
+GRANT SELECT ON parquimetros.ubicaciones TO 'parquimetro'@'%';
+GRANT SELECT ON parquimetros.parquimetros TO 'parquimetro'@'%';
+GRANT SELECT ON parquimetros.tarjetas TO 'parquimetro'@'%';
+
+
+/*
+	El usuario 'parquimetro' cuenta con permiso para
+	llamar al procedimiento "conectar"
+*/
+# ------------------------------------------------------------------------------------
+
+
+
+
+#-------------------------------------------------------------------------
+# Creación del procedimiento conectar
+#-------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------------
+
+delimiter !
+create procedure conectar(IN id_Tarjetas INTEGER , IN id_parq INTEGER);
+begin
+
+    #Declaro las variables auxialiares
+    declare fecha_entAux, fecha_salAux date;
+    declare hora_entAux, hora_salAux time;
+    declare TarjetasAux, nuevoSaldo, saldoAux, id_parqAux, tarifaAux, descuentoAux, tiempoAux int;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            SELECT 'SQLEXCEPTION: Transacción abortada' as Resultado;
+            ROLLBACK;
+        END;
+
+    START TRANSACTION
+
+        #Declaro el cursos con el cual recupero los datos del estacionamiento
+        declare c_operacion cursor for
+            SELECT id_Tarjetas, fecha_ent, hora_ent, fecha_sal, hora_sal
+            FROM estacionamientos e
+            WHERE fecha_salida = NULL and hora_sal = NULL and id_Tarjetas = e.id_Tarjetas and id_parq = e.id_parq;
+
+        #Guardo en las variables auxiliares de la primera fila que recupera el cursor
+        open c_operacion;
+        fetch c_operacion into TarjetasAux, fecha_entAux, hora_entAux, fecha_salAux, hora_salAux;
+
+        #Recuperoe el saldo, descuento y tarifa (VER --> DESCUENTO BLOQUEADO)
+        SELECT saldo, descuento INTO saldoAux, descuentoAux FROM Tarjetas t NATURAL JOIN tipos_Tarjetas WHERE id_Tarjetas = t.id_Tarjetas FOR UPDATE;
+#Recuperar tarifa de la ubicacion donde se estaciono, no de donde ciera el estacionamiento (usar la id_parq que nos dan por parametro esta mal)
+		SELECT tarifa INTO tarifaAux FROM parquimetros p NATURAL JOIN ubicaciones WHERE id_parq = p.id_parq;
+
+        if TarjetasAux != NULL then # Significa que esta estacionado y la operacion es de cierre
+
+            #Calculo del tiempo: cantidad de minutos desde la fecha y hora de entrada hasta la fecha y hora actual.
+            set tiempoAux = datediff(minute, (cast(fecha_entAux as datetime) + cast(hora_entAux as datetime)), (cast(fecha_salAux as datetime) + cast(hora_salAux as datetime))));
+
+            #Calculo de el nuevo saldo: Nuevo_saldo = saldo − (tiempo ∗ tarifa ∗ (1 − descuento))
+            set nuevoSaldo = saldoAux - (tiempoAux * tarifaAux * (1 - descuentoAux));
+
+            #Chequeo de que el saldo no supere '-999.99'
+            if nuevoSaldo < -999.99 then
+                set nuevoSaldo = -999.99;
+            end if;
+
+            #Guardo el nuevo saldo
+            UPDATE Tarjetas t
+            SET saldo = nuevoSaldo # puede faltar --> ;
+            WHERE id_Tarjetas = t.id_Tarjetas;
+
+            #Guardar todo en una tabla
+            #Operacion - cantidad de tiempo transcurrido en minutos - saldo actualizado de la Tarjetas
+            SELECT 'Cierre' as Operacion, tiempoAux as TiempoTranscurrido, nuevoSaldo as SaldoActualizado;
+
+        else # Significa que no esta estacionado y la operacion es de apertura
+
+            #No es exitoso
+            if saldoAux <= 0 then
+                set exito = 'Saldo menor a 0';
+                set tiempoAux = 0;
+            else #Es exitoso
+                #Cantidad de tiempo disponible = Saldo / (Tarifa * (1 - Descuento))
+                set tiempoAux = saldoAux / (tarifaAux * (1 - descuentoAux));
+
+                INSERT INTO estacionamiento(id_tarjeta, id_parq, fecha_ent, hora_ent, fecha_sal, hora_sal)
+                VALUES (id_tarjeta, id_parq, curdate(), curtime(), NULL, NULL);
+
+                set exito = 'Exito';
+            end if;
+
+            #Guardar todo en una tabla
+            #Operacion - Exitosa o no - Cantidad de minutos que dispone
+            SELECT 'Apertura' as Operacion, exito as Resultado, tiempoAux as TiempoTranscurrido;
+
+        end if;
+
+    COMMIT;
+
+end; !
+delimiter ;
+
+
+
+
+
+#-------------------------------------------------------------------------
+# Creación del Trigger
+#-------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------------
+
+delimiter !
+CREATE TRIGGER ventas_update
+AFTER INSERT ON tarjetas
+FOR EACH ROW
+begin
+    INSERT INTO ventas(id_tarjeta, tipo_tarjeta, saldo, fecha, hora)
+    VALUES(NEW.id_tarjeta, NEW.tipo_tarjeta, NEW.saldo, curdate(), curtime());
+end; !
+delimiter;

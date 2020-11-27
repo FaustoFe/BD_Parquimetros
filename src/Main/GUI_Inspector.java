@@ -30,23 +30,23 @@ import java.awt.event.MouseEvent;
 public class GUI_Inspector {
 
 	private JFrame frame;
-	
+
 	private Inspector inspector;
 	private String nombreInspector;
 	private GUI_Login guiLogin;
 	private HashMap<String,String> mapaErrores; //Key: patente, Value: msg con el error
 	private Set<String> patentes; //Conjunto de patentes que fue agregando el inspector
-	
+
 	//Componentes graficos
-	private JPanel panelPatentes, panelUbicacionParquimetro, panelMulta; 
+	private JPanel panelPatentes, panelUbicacionParquimetro, panelMulta;
 	private JScrollPane scrollPaneTablaMultas, scrollPaneListaPatentes, scrollPaneListaErronea;
 	private JTextField txtPatente;
-	private JLabel lblPatente, lblListaPatente, lblSeleccionarUbicacion, lblMultasLabradas, lblMultasErroneasPorError, lblSeleccionarParquimetros, lblMultasErroneas; 
+	private JLabel lblPatente, lblListaPatente, lblSeleccionarUbicacion, lblMultasLabradas, lblMultasErroneasPorError, lblSeleccionarParquimetros, lblMultasErroneas;
 	private JButton btnAddPatente, btnEliminarPatente, btnConfirmarPatentes, btnConfirmarUbicacionParquimetro, btnVolver, btnVolverMenu;
 	private JList listaPatentes, listaErroneas;
 	private JComboBox cbParquimetros, cbUbicaciones;
 	private JTable tablaMultas;
-	
+
 	//Modelos para la tabla, lista y los combobox
 	private DefaultTableModel modeloTabla;
 	private DefaultListModel modeloLista,modeloListaErronea;
@@ -74,7 +74,7 @@ public class GUI_Inspector {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.getContentPane().setLayout(null);
-		
+
 		btnVolverMenu = new JButton("Volver al login");
 		btnVolverMenu.setBounds(10, 380, 114, 23);
 		btnVolverMenu.setFont(new Font("Dubai", Font.PLAIN, 12));
@@ -83,55 +83,55 @@ public class GUI_Inspector {
 				panelMulta.setVisible(false);
 				panelUbicacionParquimetro.setVisible(false);
 				panelPatentes.setVisible(false);
-				
+
 				guiLogin.getFrame().setVisible(true);
 				Login.desconectarBD();
-				frame.dispose();				
+				frame.dispose();
 			}
 		});
 		frame.getContentPane().add(btnVolverMenu);
-		
-		
-		
+
+
+
 		//Creacion de los 3 paneles
-		
+
 		panelPatentes = new JPanel();
 		panelPatentes.setBounds(0, 0, 275, 350);
 		panelPatentes.setBackground(new Color(51, 204, 255));
 		panelPatentes.setLayout(null);
 		panelPatentes.setVisible(true);
 		frame.getContentPane().add(panelPatentes);
-		
+
 		panelUbicacionParquimetro = new JPanel();
 		panelUbicacionParquimetro.setBounds(0, 0, 275, 350);
 		panelUbicacionParquimetro.setBackground(new Color(51, 204, 255));
 		panelUbicacionParquimetro.setLayout(null);
 		panelUbicacionParquimetro.setVisible(false);
 		frame.getContentPane().add(panelUbicacionParquimetro);
-		
+
 		panelMulta = new JPanel();
 		panelMulta.setBounds(0, 0, 980, 370);
 		panelMulta.setBackground(new Color(51, 204, 255));
 		panelMulta.setLayout(null);
 		panelMulta.setVisible(false);
 		frame.getContentPane().add(panelMulta);
-		
 
-		
-		
+
+
+
 		//Componentes del panelPatente
-		
+
 		lblPatente = new JLabel("Patente");
 		lblPatente.setBounds(50, 11, 46, 14);
 		lblPatente.setFont(new Font("Dubai", Font.PLAIN, 12));
 		panelPatentes.add(lblPatente);
-		
+
 		txtPatente = new JTextField();
 		txtPatente.setBounds(20, 25, 103, 20);
 		txtPatente.setFont(new Font("Dubai", Font.PLAIN, 12));
 		txtPatente.setColumns(10);
 		panelPatentes.add(txtPatente);
-		
+
 		btnAddPatente = new JButton("Agregar patente");
 		btnAddPatente.setBounds(134, 25, 122, 20);
 		btnAddPatente.setToolTipText("Agregar patente");
@@ -139,25 +139,25 @@ public class GUI_Inspector {
 		btnAddPatente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				boolean pudoInsertar = false;
-				
+
 				if (verificarPatente(txtPatente.getText())) { // controlar longitud 6 y que el formato sea LLLNNN (L = letra mayuscula y N = digito)
 					pudoInsertar = patentes.add(txtPatente.getText());
 					if(pudoInsertar) {
 						modeloLista.add(modeloLista.size(), txtPatente.getText());
 					}
 					else { //Patente duplicada;
-						JOptionPane.showMessageDialog(null, "Patente duplicada","Error", JOptionPane.ERROR_MESSAGE);	
+						JOptionPane.showMessageDialog(null, "Patente duplicada","Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				else { //Patente invalida;
-					JOptionPane.showMessageDialog(null, "Formato de patente incorrecta","Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Formato de patente incorrecta (Formato correcto: 'AAA111')","Error", JOptionPane.ERROR_MESSAGE);
 				}
-				
+
 				txtPatente.setText("");
 			}
 		});
 		panelPatentes.add(btnAddPatente);
-		
+
 		btnConfirmarPatentes = new JButton("Confirmar");
 		btnConfirmarPatentes.setBounds(134, 56, 122, 20);
 		btnConfirmarPatentes.setToolTipText("Agregar patente");
@@ -171,13 +171,13 @@ public class GUI_Inspector {
 			}
 		});
 		panelPatentes.add(btnConfirmarPatentes);
-		
+
 		lblListaPatente = new JLabel("Listas patentes");
 		lblListaPatente.setBounds(20, 99, 103, 14);
 		lblListaPatente.setHorizontalAlignment(SwingConstants.CENTER);
 		lblListaPatente.setFont(new Font("Dubai", Font.PLAIN, 12));
 		panelPatentes.add(lblListaPatente);
-		
+
 		btnEliminarPatente = new JButton("Eliminar patente");
 		btnEliminarPatente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -185,36 +185,36 @@ public class GUI_Inspector {
 		           String patente = listaPatentes.getSelectedValue().toString();
 		           patentes.remove(patente);
 		           modeloLista.removeElement(patente);
-				}				
+				}
 			}
 		});
 		btnEliminarPatente.setBounds(134, 124, 122, 20);
 		btnEliminarPatente.setToolTipText("Eliminar patente");
 		btnEliminarPatente.setFont(new Font("Dubai", Font.PLAIN, 12));
 		panelPatentes.add(btnEliminarPatente);
-		
+
 		scrollPaneListaPatentes = new JScrollPane();
 		scrollPaneListaPatentes.setBounds(20, 124, 103, 205);
 		panelPatentes.add(scrollPaneListaPatentes);
-		
+
 		listaPatentes = new JList();
 		scrollPaneListaPatentes.setViewportView(listaPatentes);
 		listaPatentes.setToolTipText("Lista patentes");
 		listaPatentes.setFont(new Font("Dubai", Font.PLAIN, 12));
 		modeloLista = new DefaultListModel();
 		listaPatentes.setModel(modeloLista);
-		
-		
-		
-		
-		//Componentes del panelUbicacionParquimetro	
-		
+
+
+
+
+		//Componentes del panelUbicacionParquimetro
+
 		lblSeleccionarUbicacion = new JLabel("Seleccionar ubicacion");
 		lblSeleccionarUbicacion.setBounds(82, 10, 122, 14);
 		lblSeleccionarUbicacion.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSeleccionarUbicacion.setFont(new Font("Dubai", Font.PLAIN, 12));
 		panelUbicacionParquimetro.add(lblSeleccionarUbicacion);
-		
+
 		cbUbicaciones = new JComboBox();
 		cbUbicaciones.setBounds(25, 30, 230, 20);
 		cbUbicaciones.setToolTipText("Ubicaciones");
@@ -228,12 +228,12 @@ public class GUI_Inspector {
 					lblSeleccionarParquimetros.setVisible(true);
 					cbParquimetros.setVisible(true);
 					String[] calleAltura = tratarDireccion(direccion);
-					cargarParquimetros(calleAltura[0], calleAltura[1]);		
+					cargarParquimetros(calleAltura[0], calleAltura[1]);
 				}
 			}
 		});
 		panelUbicacionParquimetro.add(cbUbicaciones);
-		
+
 		btnConfirmarUbicacionParquimetro = new JButton("Confirmar");
 		btnConfirmarUbicacionParquimetro.setFont(new Font("Dubai", Font.PLAIN, 12));
 		btnConfirmarUbicacionParquimetro.setBounds(160, 319, 89, 23);
@@ -241,47 +241,47 @@ public class GUI_Inspector {
 		btnConfirmarUbicacionParquimetro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				int opcion = JOptionPane.showConfirmDialog(null, "¿Confirma la calle y ubicación?", "Confirmación", JOptionPane.YES_NO_OPTION);
-								
+				int opcion = JOptionPane.showConfirmDialog(null, "ï¿½Confirma la calle y ubicaciï¿½n?", "Confirmaciï¿½n", JOptionPane.YES_NO_OPTION);
+
 				if (opcion == JOptionPane.OK_OPTION) {
 					String[] calleAltura = tratarDireccion(cbUbicaciones.getSelectedItem().toString());
 	                String id_parquimetro = cbParquimetros.getSelectedItem().toString();
-	                
+
 		        	ArrayList<ArrayList<String>> datos = inspector.conectarParquimetro(calleAltura[0], calleAltura[1], id_parquimetro, patentes);
-		        	
+
 		        	if (datos == null) {
-		        		JOptionPane.showMessageDialog(null, "Ubicación no asignada", "Error", JOptionPane.CANCEL_OPTION);
+		        		JOptionPane.showMessageDialog(null, "Ubicaciï¿½n no asignada", "Error", JOptionPane.CANCEL_OPTION);
 		        	}
 		        	else {
 		        		patentes = new HashSet<String>();
 		        		cargarTablaMulta(datos);
 		        		panelUbicacionParquimetro.setVisible(false);
 		        		panelMulta.setVisible(true);
-		        		frame.setBounds(100, 100, 983, 489); //Agrando el frame a tamaño de la tabla
+		        		frame.setBounds(100, 100, 983, 489); //Agrando el frame a tamaï¿½o de la tabla
 		        	}
 		        }
 			}
 		});
 		panelUbicacionParquimetro.add(btnConfirmarUbicacionParquimetro);
-		
-		
+
+
 		btnVolver = new JButton("Volver");
 		btnVolver.setFont(new Font("Dubai", Font.PLAIN, 12));
 		btnVolver.setBounds(30, 319, 89, 23);
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				panelUbicacionParquimetro.setVisible(false);				
+				panelUbicacionParquimetro.setVisible(false);
 				bm.removeAllElements();
 				cbParquimetros.setVisible(false);
 				modeloParquimetros.removeAllElements();
 				lblSeleccionarParquimetros.setVisible(false);
 				btnConfirmarUbicacionParquimetro.setEnabled(false);
-				
-				panelPatentes.setVisible(true);	
+
+				panelPatentes.setVisible(true);
 			}
 		});
 		panelUbicacionParquimetro.add(btnVolver);
-		
+
 		cbParquimetros = new JComboBox();
 		cbParquimetros.setToolTipText("Ubicaciones");
 		cbParquimetros.setFont(new Font("Dubai", Font.PLAIN, 12));
@@ -295,47 +295,47 @@ public class GUI_Inspector {
 			}
 		});
 		panelUbicacionParquimetro.add(cbParquimetros);
-		
+
 		lblSeleccionarParquimetros = new JLabel("Seleccionar parquimetro");
 		lblSeleccionarParquimetros.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSeleccionarParquimetros.setFont(new Font("Dubai", Font.PLAIN, 12));
 		lblSeleccionarParquimetros.setBounds(72, 116, 140, 14);
 		lblSeleccionarParquimetros.setVisible(false);
 		panelUbicacionParquimetro.add(lblSeleccionarParquimetros);
-		
 
-		
+
+
 
 
 		//Componentes del panelMulta
-		
+
 		lblMultasLabradas = new JLabel("Multas labradas");
 		lblMultasLabradas.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMultasLabradas.setBounds(193, 15, 265, 35);
 		lblMultasLabradas.setFont(new Font("Dubai", Font.PLAIN, 30));
 		panelMulta.add(lblMultasLabradas);
-		
+
 		scrollPaneTablaMultas = new JScrollPane();
 		scrollPaneTablaMultas.setToolTipText("Multas que fueron labradas");
 		scrollPaneTablaMultas.setBounds(10, 56, 706, 297);
 		panelMulta.add(scrollPaneTablaMultas);
-		
+
 		tablaMultas = new JTable();
 		tablaMultas.setFont(new Font("Dubai", Font.PLAIN, 12));
 		modeloTabla = new DefaultTableModel();
 		tablaMultas.setModel(modeloTabla);
 		scrollPaneTablaMultas.setViewportView(tablaMultas);
-		
+
 		lblMultasErroneas = new JLabel("Multas no creadas");
 		lblMultasErroneas.setBounds(712, 15, 265, 35);
 		panelMulta.add(lblMultasErroneas);
 		lblMultasErroneas.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMultasErroneas.setFont(new Font("Dubai", Font.PLAIN, 30));
-		
+
 		scrollPaneListaErronea = new JScrollPane();
 		scrollPaneListaErronea.setBounds(772, 56, 130, 297);
 		panelMulta.add(scrollPaneListaErronea);
-		
+
 		listaErroneas = new JList();
 		listaErroneas.setFont(new Font("Dubai", Font.PLAIN, 12));
 		listaErroneas.addMouseListener(new MouseAdapter() {
@@ -345,7 +345,7 @@ public class GUI_Inspector {
 			}
 		});
 		scrollPaneListaErronea.setViewportView(listaErroneas);
-		
+
 		lblMultasErroneasPorError = new JLabel("(Click en la patente para ver el error)");
 		lblMultasErroneasPorError.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMultasErroneasPorError.setFont(new Font("Dubai", Font.PLAIN, 12));
@@ -354,18 +354,18 @@ public class GUI_Inspector {
 		listaErroneas.setModel(modeloListaErronea);
 		panelMulta.add(lblMultasErroneasPorError);
 	}
-	
+
 	/*
 	 * Carga las ubicaciones en el comboBoxUbicaciones
-	 */	
+	 */
 	private void cargarUbicaciones() {
 		ArrayList<String> ubicaciones = inspector.getUbicaciones();
-		
+
 		for(int i = 0; i < ubicaciones.size(); i++) {
 			bm.addElement(ubicaciones.get(i));
 		}
 	}
-	
+
 	/*
 	 * Carga los parquimetros al comboBoxParquimetros
 	 * Dependiendo de la calle y altura pasadas por parametros.
@@ -373,21 +373,21 @@ public class GUI_Inspector {
 	private void cargarParquimetros(String calle, String altura) {
 		modeloParquimetros.removeAllElements();
 		ArrayList<String> parquimetros = inspector.getParquimetros(calle, altura);
-		
+
 		for(int i = 0; i < parquimetros.size(); i++) {
 			modeloParquimetros.addElement(parquimetros.get(i));
 		}
 	}
-	
+
 	/*
 	 * Carga la tabla multa
 	 */
 	private void cargarTablaMulta(ArrayList<ArrayList<String>> datos) {
-		
+
 		//Reseteo la tabla
 		modeloTabla.setRowCount(0);
 		modeloTabla.fireTableDataChanged();
-		
+
 	    // Nombres de la columna
 	    Vector<String> columnNames = new Vector<String>();
 	    int columnCount = 7; //Por las cantidad de columnas
@@ -399,7 +399,7 @@ public class GUI_Inspector {
 	    columnNames.add("Patente");
 	    columnNames.add("Legajo inspector");
 
-	    
+
 	    // Datos de la tabla
 	    Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 	    for(ArrayList<String> al : datos) {
@@ -412,16 +412,16 @@ public class GUI_Inspector {
 
 	    modeloTabla.setDataVector(data, columnNames);
 	}
-	
+
 	/*
 	 * Separo la direccion, devolviendo un arreglo de 2 componentes
 	 * la primera componente: la direccion
 	 * la segunda componente: es la altura
 	 */
 	private String[] tratarDireccion(String direccion) {
-    	
+
 		String toReturn[] = new String[2];
-		
+
 		// Separar el string de la ubicacion en calle y altura
 		String[]separado = direccion.split(" ");
         String calle = "";
@@ -434,39 +434,39 @@ public class GUI_Inspector {
         }
 
         String altura = separado[separado.length-1];
-        
-        
+
+
         toReturn[0] = calle;
         toReturn[1] = altura;
-        
+
         return toReturn;
 	}
-	
+
 	/*
 	 * Cargo la lista de las patentes con errores
 	 */
 	public void cargarListaErrores(HashMap<String,String> multasErroneas) {
 		int i = 0;
 		modeloListaErronea.removeAllElements();
-		
+
 		this.mapaErrores = multasErroneas;
 
 		for(String p : multasErroneas.keySet()) {
 			modeloListaErronea.add(i++, p);
-		}	
+		}
 	}
-	
+
 	public boolean verificarPatente(String patente) {
-		 boolean resultado = 	(patente.length() == 6) && 
-				 				Character.isUpperCase(patente.charAt(0)) && 
-				 				Character.isUpperCase(patente.charAt(1)) && 
+		 boolean resultado = 	(patente.length() == 6) &&
+				 				Character.isUpperCase(patente.charAt(0)) &&
+				 				Character.isUpperCase(patente.charAt(1)) &&
 				 				Character.isUpperCase(patente.charAt(2)) &&
-				 				Character.isDigit(patente.charAt(3)) && 
-				 				Character.isDigit(patente.charAt(4)) && 
+				 				Character.isDigit(patente.charAt(3)) &&
+				 				Character.isDigit(patente.charAt(4)) &&
 				 				Character.isDigit(patente.charAt(5));
-		 
+
 		 return resultado;
 	}
-	
-	
+
+
 }
