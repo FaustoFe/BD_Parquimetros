@@ -165,11 +165,11 @@ public class GUI_Login {
 		btnConectarParquimetro.setToolTipText("Conectarse como parquimetro");
 		btnConectarParquimetro.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Login.conectarBD(password);
+				Login.conectarParquimetroBD();
 				
 				if(Login.getConexion() != null) { //Exito al entrar
 					JOptionPane.showMessageDialog(null, "Conexión exitosa","Éxito", JOptionPane.PLAIN_MESSAGE);
-					//inicializarParquimetro();
+					inicializarParquimetro();
 				}
 				else { //Intentar de nuevo
 					JOptionPane.showMessageDialog(null, "Intentelo de nuevo","Error", JOptionPane.ERROR_MESSAGE);	
@@ -213,6 +213,24 @@ public class GUI_Login {
 		GUI_Admin ga = new GUI_Admin(this);
 		frame.setVisible(false);
 	}
+
+	
+/*
+	=====================================================================================================================================
+*/
+	
+	/*
+	 * Inicializamos a Parquimetros
+	 */
+	private void inicializarParquimetro() {
+		GUI_Parquimetro gp = new GUI_Parquimetro(this);
+		frame.setVisible(false);
+	}
+	
+/*
+	=====================================================================================================================================
+*/
+	
 	
 	/*
 	 * Metodo para obtener el frame de la GUI_Login
