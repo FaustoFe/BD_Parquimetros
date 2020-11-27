@@ -12,6 +12,13 @@ public abstract class Login {
 	/*
 	 * Establece una conección de tipo de usuario admin.
 	 */
+	public static void conectarParquimetroBD() {
+		establecerConexion("parquimetro", "parq");
+	}
+	
+	/*
+	 * Establece una conección de tipo de usuario admin.
+	 */
 	public static void conectarBD(String clave) {
 		establecerConexion("admin", clave);
 	}
