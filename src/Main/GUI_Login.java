@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class GUI_Login {
 
@@ -56,7 +57,8 @@ public class GUI_Login {
 				
 		// Labels
 		lblTitulo = new JLabel("Panel de logueo");
-		lblTitulo.setBounds(125, 11, 415, 69);
+		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitulo.setBounds(87, 30, 415, 69);
 		lblTitulo.setFont(new Font("Dubai", Font.PLAIN, 40));
 		frame.getContentPane().add(lblTitulo);
 		

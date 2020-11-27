@@ -1,6 +1,7 @@
 package Main;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -87,15 +88,23 @@ public abstract class Parquimetro {
 				ResultSet rs = stmt.executeQuery("CALL conectar(" + id_tarjeta + ", " + id_parq + ")");
 				
 				if(rs.next()) {
-					String operacion = rs.getString("Operacion");
-					resultado.add("Operacion: " + rs.getString("Operacion"));
-					if(operacion == "Apertura") {
-						resultado.add("Resultado: " + rs.getString("Resultado"));
-						resultado.add("Tiempo transcurrido: " + rs.getString("TiempoTranscurrido"));
+					
+					ResultSetMetaData rsmd = rs.getMetaData();
+					int cantColumnas = rsmd.getColumnCount();					
+					if(cantColumnas > 1) {
+						String operacion = rs.getString(1);
+						resultado.add("Operacion: " + operacion);
+						if(operacion.equals("Apertura")) {
+							resultado.add("Resultado: " + rs.getString(2));
+							resultado.add("Tiempo disponible: " + rs.getString(3));
+						}
+						else {
+							resultado.add("Tiempo transcurrido: " + rs.getString(2));
+							resultado.add("Saldo actualizado: " + rs.getString(3));
+						}
 					}
 					else {
-						resultado.add("Tiempo transcurrido: " + rs.getString("TiempoTranscurrido"));
-						resultado.add("Saldo actualizado: " + rs.getString("SaldoActualizado"));
+						resultado.add(rs.getString(1));
 					}
 				}
 			

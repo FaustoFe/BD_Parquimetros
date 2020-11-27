@@ -35,7 +35,8 @@ public class GUI_Parquimetro {
 		guiLogin = gl;
 		initialize();
 		cargarUbicaciones();
-		cargarTarjetas();	
+		cargarTarjetas();
+		this.frame.setVisible(true);
 	}
 
 	/*
@@ -92,13 +93,11 @@ public class GUI_Parquimetro {
 		lblTarjetas.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTarjetas.setFont(new Font("Dubai", Font.PLAIN, 16));
 		lblTarjetas.setBounds(69, 172, 200, 26);
-		//lblTarjetas.setVisible(false);
 		frame.getContentPane().add(lblTarjetas);
 		
 		cbTarjetas = new JComboBox();
 		cbTarjetas.setFont(new Font("Dubai", Font.PLAIN, 16));
 		cbTarjetas.setBounds(10, 202, 300, 22);
-		cbTarjetas.setVisible(false);
 		modeloTarjetas = new DefaultComboBoxModel();
 		cbTarjetas.setModel(modeloTarjetas);
 		frame.getContentPane().add(cbTarjetas);
