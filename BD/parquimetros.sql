@@ -323,7 +323,7 @@ BEGIN
       #Recupero el saldo, descuento y tarifa
       SELECT saldo, descuento INTO saldoAux, descuentoAux FROM tarjetas t NATURAL JOIN tipos_tarjeta WHERE id_tarjeta = t.id_tarjeta FOR UPDATE;
 
-	  IF EXISTS (SELECT * FROM Tarjetas WHERE id_tarjeta = idTarjeta) AND EXISTS(SELECT * FROM Parquimetros WHERE id_parq = idParq) THEN
+	  	IF EXISTS (SELECT * FROM Tarjetas WHERE Tarjetas.id_tarjeta = id_tarjeta) AND EXISTS(SELECT * FROM Parquimetros WHERE Parquimetros.id_parq = id_parq) THEN
 
 	      # Significa que esta estacionado y la operacion es de cierre
 			IF EXISTS (SELECT * FROM estacionamientos e WHERE fecha_sal IS NULL AND hora_sal IS NULL AND id_tarjeta = e.id_tarjeta) THEN
@@ -363,9 +363,9 @@ BEGIN
 			  end;
 	     	else # Significa que no esta estacionado y la operacion es de apertura
 			  begin
-					#Recupero la tarifa que posee esa ubicación del parquimetro donde se conecto
 
-					SELECT tarifa INTO tarifaAux FROM parquimetros p NATURAL JOIN ubicaciones WHERE id_parqAux = p.id_parq LOCK IN SHARE MODE;
+					#Recupero la tarifa que posee esa ubicación del parquimetro donde se conecto
+					SELECT tarifa INTO tarifaAux FROM parquimetros p NATURAL JOIN ubicaciones WHERE id_parq = p.id_parq LOCK IN SHARE MODE;
 
 		         #No es exitoso
 		         if saldoAux <= 0 then
