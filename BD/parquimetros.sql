@@ -319,26 +319,23 @@ BEGIN
 
 	START TRANSACTION;
 
-
-      #Recupero el saldo, descuento y tarifa
-      SELECT saldo, descuento INTO saldoAux, descuentoAux FROM tarjetas t NATURAL JOIN tipos_tarjeta WHERE id_tarjeta = t.id_tarjeta FOR UPDATE;
-
 	  	IF EXISTS (SELECT * FROM Tarjetas WHERE Tarjetas.id_tarjeta = id_tarjeta) AND EXISTS(SELECT * FROM Parquimetros WHERE Parquimetros.id_parq = id_parq) THEN
+
+			#Recupero el saldo, descuento y tarifa
+      	SELECT saldo, descuento INTO saldoAux, descuentoAux FROM tarjetas t NATURAL JOIN tipos_tarjeta WHERE id_tarjeta = t.id_tarjeta FOR UPDATE;
 
 	      # Significa que esta estacionado y la operacion es de cierre
 			IF EXISTS (SELECT * FROM estacionamientos e WHERE fecha_sal IS NULL AND hora_sal IS NULL AND id_tarjeta = e.id_tarjeta) THEN
 				begin
-					#Consigo los datos del estacionamiento Abierto
-		      	SELECT id_parq, fecha_ent, hora_ent INTO id_parqAux, fecha_entAux, hora_entAux FROM estacionamientos e WHERE fecha_sal IS NULL AND hora_sal IS NULL AND id_tarjeta = e.id_tarjeta FOR UPDATE;
+					#Consigo los datos del estacionamiento Abierto (Pisamos id_parq del parametro)
+		      	SELECT e.id_parq, fecha_ent, hora_ent INTO id_parqAux, fecha_entAux, hora_entAux FROM estacionamientos e WHERE fecha_sal IS NULL AND hora_sal IS NULL AND id_tarjeta = e.id_tarjeta FOR UPDATE;
 
 					#Recuperar tarifa de la ubicacion donde se estaciono inicialmente
-					SELECT tarifa INTO tarifaAux FROM parquimetros p NATURAL JOIN ubicaciones WHERE id_parqAux = p.id_parq LOCK IN SHARE MODE;
-
+					SELECT tarifa INTO tarifaAux FROM parquimetros p NATURAL JOIN ubicaciones WHERE p.id_parq = id_parqAux LOCK IN SHARE MODE;
 
 		         #Calculo del tiempo: cantidad de minutos desde la fecha y hora de entrada hasta la fecha y hora actual.
 					set fechaEntrada = CAST(CONCAT(fecha_entAux, ' ', hora_entAux) AS DATETIME);
 					set tiempoAux = TIMESTAMPDIFF(MINUTE, fechaEntrada, NOW());
-
 
 					#Calculo de el nuevo saldo: Nuevo_saldo = saldo − (tiempo ∗ tarifa ∗ (1 − descuento))
 		         #Chequeo de que el saldo no supere '-999.99'
@@ -365,7 +362,7 @@ BEGIN
 			  begin
 
 					#Recupero la tarifa que posee esa ubicación del parquimetro donde se conecto
-					SELECT tarifa INTO tarifaAux FROM parquimetros p NATURAL JOIN ubicaciones WHERE id_parq = p.id_parq LOCK IN SHARE MODE;
+					SELECT tarifa INTO tarifaAux FROM parquimetros p NATURAL JOIN ubicaciones WHERE p.id_parq = id_parq LOCK IN SHARE MODE;
 
 		         #No es exitoso
 		         if saldoAux <= 0 then
